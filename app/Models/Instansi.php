@@ -13,7 +13,8 @@ class Instansi extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'instansi',
+        'nama',
+        'kategori',
     ];
 
     protected static function boot(): void

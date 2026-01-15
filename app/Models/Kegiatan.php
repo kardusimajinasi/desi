@@ -2,32 +2,28 @@
 
 namespace App\Models;
 
-use App\Models\Kegiatan;
+use App\Models\Layanan;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Layanan extends Model
+class Kegiatan extends Model
 {
-    use HasFactory;
-
-    protected $table = 'tbl_layanan';
-    public $incrementing = false;
     protected $keyType = 'string';
+    public $incrementing = false;
 
     protected $fillable = [
         'nama',
-        'kode_layanan',
+        'dengan_anggaran',
+        'layanan_id',
         'aktif',
     ];
 
+    protected $with = ['Layanans'];
 
-    protected $with = ['Kegiatans'];
-
-    public function kegiatans(): HasMany
+    public function layanans(): BelongsTo
     {
-        return $this->hasMany(Kegiatan::class, 'layanan_id');
+        return $this->belongsTo(Layanan::class);
     }
 
     protected static function booted()

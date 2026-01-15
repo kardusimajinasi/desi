@@ -24,11 +24,18 @@ class InstansiResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('instansi')
+                Forms\Components\TextInput::make('nama')
                     ->label('Nama Instansi')
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
+                Forms\Components\Select::make('kategori')
+                    ->label('Kategori')
+                    ->required()
+                    ->options([
+                        'pemerintah' => 'Pemerintah',
+                        'swasta' => 'Swasta',
+                    ]),            
             ]);
     }
 
@@ -37,32 +44,38 @@ class InstansiResource extends Resource
         return $table
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                    ->label('Tambah Instansi')
-                    ->modalHeading('Tambah Instnsi')
-                    ->modalSubmitActionLabel('Simpan')
-                    ->modalCancelActionLabel('Batal')
-                    ->disableCreateAnother(),
+                //     ->label('Tambah Instansi')
+                //     ->modalHeading('Tambah Instnsi')
+                //     ->modalSubmitActionLabel('Simpan')
+                //     ->modalCancelActionLabel('Batal')
+                //     ->disableCreateAnother(),
             ])
             ->columns([
-                Tables\Columns\TextColumn::make('instansi')
+                Tables\Columns\TextColumn::make('nama')
                     ->label('Nama Instansi')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('kategori')
+                    ->label('Kategori')
+                    ->formatStateUsing(fn (string $state): string => ucfirst($state))
+                    ->searchable()
+                    ->sortable(),
             ])
+            ->defaultSort('nama', 'asc')
             ->filters([])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->modalHeading('Edit Instansi')
-                    ->modalWidth('lg')
-                    ->modal()
-                    ->successNotificationTitle('Instansi berhasil diperbarui')
-                     ->modalSubmitActionLabel('Simpan Perubahan') // ubah dari "Save changes"
-                    ->modalCancelActionLabel('Batal')
+                    // ->modalHeading('Edit Instansi')
+                    // ->modalWidth('lg')
+                    // ->modal()
+                    // ->successNotificationTitle('Instansi berhasil diperbarui')
+                    //  ->modalSubmitActionLabel('Simpan Perubahan') // ubah dari "Save changes"
+                    // ->modalCancelActionLabel('Batal')
                     ->after(function ($record, $data, $action) {
                         $action->getLivewire()->dispatch('$refresh');
                     }),
                 Tables\Actions\DeleteAction::make()
-                    ->modalHeading('Hapus Instansi')
+                    // ->modalHeading('Hapus Instansi')
                     ->label('Hapus'),
             ])
             ->bulkActions([

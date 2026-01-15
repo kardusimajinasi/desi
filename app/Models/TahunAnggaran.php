@@ -2,32 +2,22 @@
 
 namespace App\Models;
 
-use App\Models\Kegiatan;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Layanan extends Model
+class TahunAnggaran extends Model
 {
-    use HasFactory;
-
-    protected $table = 'tbl_layanan';
     public $incrementing = false;
     protected $keyType = 'string';
 
-    protected $fillable = [
-        'nama',
-        'kode_layanan',
-        'aktif',
-    ];
+    protected $fillable = ['nama', 'mulai', 'selesai', 'aktif'];
 
+    protected $with = ['AnggaranBelanjas'];
 
-    protected $with = ['Kegiatans'];
-
-    public function kegiatans(): HasMany
+    public function anggaranBelanjas(): HasMany
     {
-        return $this->hasMany(Kegiatan::class, 'layanan_id');
+        return $this->hasMany(AnggaranBelanja::class, 'tahun_anggaran_id');
     }
 
     protected static function booted()
