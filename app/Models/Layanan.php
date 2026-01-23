@@ -23,9 +23,9 @@ class Layanan extends Model
     ];
 
 
-    protected $with = ['Kegiatans'];
+    // protected $with = ['Kegiatan'];
 
-    public function kegiatans(): HasMany
+    public function kegiatan(): HasMany
     {
         return $this->hasMany(Kegiatan::class, 'layanan_id');
     }

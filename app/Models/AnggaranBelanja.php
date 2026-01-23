@@ -19,16 +19,17 @@ class AnggaranBelanja extends Model
                             'nama', 
                             'sisa_volume'];
 
-    protected $with = ['tahunAnggarans', 'kegiatan'];
+    protected $with = ['tahunAnggaran', 'kegiatan'];
+    // protected $with = ['kegiatan'];
 
-    public function tahunAnggarans(): BelongsTo
+    public function tahunAnggaran(): BelongsTo
     {
         return $this->belongsTo(TahunAnggaran::class, 'tahun_anggaran_id');
     }
 
-    public function kegiatans(): HasMany
+    public function kegiatan(): BelongsTo
     {
-        return $this->hasMany(Kegiatan::class, 'kegiatan_id');
+        return $this->belongsTo(Kegiatan::class, 'kegiatan_id');
     } 
 
     protected static function booted()

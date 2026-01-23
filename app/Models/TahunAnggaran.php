@@ -13,9 +13,9 @@ class TahunAnggaran extends Model
 
     protected $fillable = ['nama', 'mulai', 'selesai', 'aktif'];
 
-    protected $with = ['AnggaranBelanjas'];
+    // protected $with = ['AnggaranBelanja'];
 
-    public function anggaranBelanjas(): HasMany
+    public function anggaranBelanja(): HasMany
     {
         return $this->hasMany(AnggaranBelanja::class, 'tahun_anggaran_id');
     }

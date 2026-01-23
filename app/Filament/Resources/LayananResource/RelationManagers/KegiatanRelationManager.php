@@ -15,7 +15,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 
 class KegiatanRelationManager extends RelationManager
 {
-    protected static string $relationship = 'kegiatans';
+    protected static string $relationship = 'kegiatan';
 
     public function form(Form $form): Form
     {

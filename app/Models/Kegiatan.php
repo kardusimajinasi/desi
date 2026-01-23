@@ -19,9 +19,9 @@ class Kegiatan extends Model
         'aktif',
     ];
 
-    protected $with = ['Layanans'];
+    protected $with = ['layanan'];
 
-    public function layanans(): BelongsTo
+    public function layanan(): BelongsTo
     {
         return $this->belongsTo(Layanan::class);
     }
