@@ -2,9 +2,13 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\DashboardAnggaranTable;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\Widgets;
+use App\Filament\Widgets\DashboardBalihoMap;
+use App\Filament\Widgets\JadwalBaliho;
+use App\Filament\Widgets\JenisKontenChart;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Http\Middleware\Authenticate;
@@ -16,8 +20,10 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Widgets\Widget;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -32,15 +38,22 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
+        ->sidebarCollapsibleOnDesktop()
+                    ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
+                Widgets\StatsOverviewWidget::class,
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                // Widgets\FilamentInfoWidget::class,
+                DashboardBalihoMap::class,
+                DashboardAnggaranTable::class,
+                JenisKontenChart::class,
+                \App\Filament\Widgets\JadwalBaliho::class,
+                // \App\Filament\Pages\JadwalMedCetak::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -57,7 +70,15 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
-                FilamentShieldPlugin::make()
+                FilamentShieldPlugin::make(),
+                FilamentFullCalendarPlugin::make()
+                    // ->schedulerLicenseKey()
+                    // ->selectable()
+                    // ->editable()
+                    // ->timezone()
+                    // ->locale()
+                    // ->plugins()
+                    // ->config()
             ]);
     }
 }

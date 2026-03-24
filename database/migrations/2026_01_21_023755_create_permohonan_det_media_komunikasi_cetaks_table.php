@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('permohonan_det_media_komunikasi_cetaks', function (Blueprint $table) {
+        Schema::create('permohonan_det_med_kom_cetaks', function (Blueprint $table) {
             $table->char('id', 36)->primary();
             $table->string('permohonan_id');
-            $table->string('anggaran_id'); // Relasi ke anggaran_belanja
+            $table->string('anggaran_id')->nullable(); 
+            $table->string('kegiatan_id')->nullable();   
             $table->string('titik_baliho_id')->nullable();
             $table->string('isi_konten');
             $table->string('keterangan')->nullable();
@@ -26,8 +27,9 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('permohonan_id')->references('id')->on('permohonans')->onDelete('cascade');
-            $table->foreign('titik_baliho_id')->references('id')->on('titik_balihos');
-            $table->foreign('anggaran_id')->references('id')->on('anggaran_belanjas');
+            $table->foreign('titik_baliho_id')->references('id')->on('titik_balihos')->onDelete('set null');
+            $table->foreign('anggaran_id')->references('id')->on('anggaran_belanjas')->onDelete('set null'); 
+            $table->foreign('kegiatan_id')->references('id')->on('kegiatans')->onDelete('set null');
         });
     }
 
@@ -36,6 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permohonan_det_media_komunikasi_cetaks');
+        Schema::dropIfExists('permohonan_det_med_kom_cetaks');
     }
 };

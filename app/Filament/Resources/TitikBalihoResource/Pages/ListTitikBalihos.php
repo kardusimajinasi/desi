@@ -2,14 +2,15 @@
 
 namespace App\Filament\Resources\TitikBalihoResource\Pages;
 
-use App\Filament\Resources\TitikBalihoResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\TitikBalihoResource;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
 
 class ListTitikBalihos extends ListRecords
 {
     protected static string $resource = TitikBalihoResource::class;
-
+    use ExposesTableToWidgets;
     protected function getHeaderActions(): array
     {
         return [
@@ -17,15 +18,16 @@ class ListTitikBalihos extends ListRecords
         ];
     }
 
-        protected function getRedirectUrl(): string
+    protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
     }
 
     protected function getHeaderWidgets(): array
-{
-    return [
-        \App\Filament\Resources\TitikBalihoResource\Widgets\BalihoMap::class,
-    ];
-}
+    {
+        // dd($this);
+        return [
+            \App\Filament\Resources\TitikBalihoResource\Widgets\BalihoMap::class,
+        ];
+    }
 }

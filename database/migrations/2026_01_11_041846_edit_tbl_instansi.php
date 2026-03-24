@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('tbl_instansi', function (Blueprint $table) {
             $table->renameColumn('instansi', 'nama')->change();
-            $table->enum('kategori', ['pemerintah', 'swasta']);
+            $table->enum('kategori', ['Pemerintah', 'Non Pemerintah']);
         });
     }
 

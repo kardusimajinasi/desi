@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TitikBaliho extends Model
 {
@@ -21,10 +22,10 @@ class TitikBaliho extends Model
         return $this->belongsTo(UkuranBaliho::class, 'ukuran_baliho_id');
     }
 
-    // public function permohonanDet(): BelongsTo
-    // {
-    //     return $this->belongsTo(UkuranBaliho::class, 'ukuran_baliho_id');
-    // } 
+    public function permohonanDetMedKomCetak(): HasMany
+    {
+        return $this->hasMany(PermohonanDetMedKomCetak::class, 'titik_baliho_id');
+    } 
 
     protected static function booted()
     {
@@ -37,8 +38,8 @@ class TitikBaliho extends Model
         static::deleting(function ($record) {
             // Cek apakah kolom foto_baliho memiliki isi
             if ($record->foto_baliho) {
-                // Hapus file dari disk 'public'
-                Storage::disk('public')->delete($record->foto_baliho);
+                // Hapus file dari disk 'local'
+                Storage::disk('local')->delete($record->foto_baliho);
             }
         });
 
@@ -50,7 +51,7 @@ class TitikBaliho extends Model
 
                 // Hapus gambar lama dari storage
                 if ($oldImagePath) {
-                    Storage::disk('public')->delete($oldImagePath);
+                    Storage::disk('local')->delete($oldImagePath);
                 }
             }
         });

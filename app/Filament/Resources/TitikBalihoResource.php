@@ -14,6 +14,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ImageColumn;
@@ -25,6 +26,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Infolists\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\TitikBalihoResource\Pages;
+use Hugomyb\FilamentMediaAction\Tables\Actions\MediaAction;
 use App\Filament\Resources\TitikBalihoResource\RelationManagers;
 use App\Filament\Resources\TitikBalihoResource\Widgets\BalihoMap;
 
@@ -75,10 +77,9 @@ class TitikBalihoResource extends Resource
                             // ->label('Foto Baliho')
                             ->image()
                             ->helperText('Format file: .jpg, .jpeg, .png. Maksimal ukuran file: 5MB.')
-                            ->disk('public')
+                            ->disk('local')
                             ->required()
                             ->directory('baliho')
-                            ->visibility('public')
                             // ->imagePreviewHeight('100')
                             ->loadingIndicatorPosition('left')
                             ->downloadable(false)
@@ -97,58 +98,7 @@ class TitikBalihoResource extends Resource
     {
         return $table
             ->columns([
-                // Tables\Columns\TextColumn::make('id')
-                //     ->label('ID')
-                //     ->searchable(),
 
-                // Tables\Columns\TextColumn::make('nama')
-                //     ->searchable()
-                //     ->wrap(),
-                // Tables\Columns\TextColumn::make('alamat')
-                //     ->searchable()
-                //     ->wrap(),
-                // Split::make([
-                //     Tables\Columns\TextColumn::make('ukuran')
-                //         ->getStateUsing(function (TitikBaliho $record) {
-                //             return $record->ukuranBaliho->ukuran_panjang . ' m x ' . $record->ukuranBaliho->ukuran_lebar . ' m';
-                //         })
-                //         ->searchable()
-                //         ->grow(false),
-                //     Tables\Columns\TextColumn::make('ukuranBaliho.layout')
-                //         ->badge() // Opsional: buat jadi badge agar menarik
-                //         ->color('info')
-                //         ->searchable()
-                //         ->grow(false),
-                // ])->,
-                // Tables\Columns\TextColumn::make('titik_lokasi')
-                //     ->searchable()
-                //     ->wrap()
-                //     ->limit(50), 
-                // Tables\Columns\ImageColumn::make('foto_baliho')
-                //     ->label('Foto')
-                //     ->disk('public')
-                //     ->size(90)
-                //     ->square()
-                //     ->extraAttributes(['class' => 'cursor-pointer'])
-                //     ->action(
-                //         Action::make('preview')
-                //             ->modal()
-                //             ->modalHeading('Preview Foto Baliho')
-                //             ->modalContent(fn(TitikBaliho $record) => view('filament.balihos._preview', [
-                //                 'record' => $record,
-                //             ]))
-                //             ->modalSubmitAction(false)
-                //             ->modalCancelActionLabel('Close')
-                //     ), 
-
-                // TextColumn::make('created_at')
-                //             ->dateTime()
-                //             ->sortable()
-                //             ->toggleable(isToggledHiddenByDefault: true),
-                //         TextColumn::make('updated_at')
-                //             ->dateTime()
-                //             ->sortable()
-                //             ->toggleable(isToggledHiddenByDefault: true),
                 Split::make([
 
                     // BAGIAN TENGAH: Nama, Alamat, Ukuran (Menumpuk)
@@ -156,16 +106,6 @@ class TitikBalihoResource extends Resource
                         TextColumn::make('nama')
                             ->weight('bold')
                             ->searchable(),
-
-
-                        // Baris Ukuran & Badge Layout
-                    ])->space(2), // Jarak antar baris teks
-                    Stack::make([
-                        TextColumn::make('alamat')
-                            ->size('sm')
-                            ->limit(70)
-                            ->searchable()
-                            ->color('gray'),
                         TextColumn::make('ukuran_formatted')
                             ->getStateUsing(fn($record) => "{$record->ukuranBaliho?->ukuran_panjang}m x {$record->ukuranBaliho?->ukuran_lebar}m")
                             ->size('xs'),
@@ -178,52 +118,55 @@ class TitikBalihoResource extends Resource
                                 default => 'primary',
                             })
                             ->size('xs'),
+                        // Baris Ukuran & Badge Layout
+                    ])->space(2), // Jarak antar baris teks
+                    Stack::make([
+                        TextColumn::make('alamat')
+                            ->size('sm')
+                            ->limit(70)
+                            ->searchable()
+                            ->color('gray'),
+                        
                     ])->space(1), // Jarak tipis antara ukuran dan badge
 
-                    ImageColumn::make('foto_baliho')
-                        // ->circular()
+                    TextColumn::make('foto_balihoo')
+                        ->label('Lihat Gambar baliho') // Judul kolom yang Anda butuhkan
+                        ->icon('heroicon-o-photo')
+                        // ->alignCenter()
+                        ->default('Lihat Gambar baliho')
                         ->grow(false)
-                        ->size(90)
-                        ->extraAttributes(['class' => 'cursor-pointer'])
+                        ->color('primary')
                         ->action(
-                            Action::make('preview')
-                                ->modal()
-                                ->modalHeading('Preview Foto Baliho')
-                                ->modalContent(fn(TitikBaliho $record) => view('filament.balihos._preview', [
-                                    'record' => $record,
-                                ]))
-                                ->modalSubmitAction(false)
-                                ->modalCancelActionLabel('Close')
+                            MediaAction::make('view_file') // Pemicu modal
+                                ->media(
+                                    function ($record) {
+                                        // Pastikan file_surat tidak null sebelum memproses route
+                                        if (! $record->foto_baliho) {
+                                            return route('baliho.private', [
+                                                // Gunakan basename hanya jika file ada
+                                                'path' => basename('kosong.png')
+                                            ]);
+                                        }
+
+                                        return route('baliho.private', [
+                                            // Gunakan basename hanya jika file ada
+                                            'path' => basename($record->foto_baliho)
+                                        ]);
+                                    }
+                                )
+                                ->modalHeading(fn($record) => "Baliho ")
+                                ->modalWidth('5xl')
+                            // Action::make('preview')
+                            //     ->modal()
+                            //     ->modalHeading('Preview Foto Baliho')
+                            //     ->modalContent(fn(TitikBaliho $record) => view('filament.balihos._preview', [
+                            //         'record' => $record,
+                            //     ]))
+                            //     ->modalSubmitAction(false)
+                            //     ->modalCancelActionLabel('Close')
                         ),
 
-                    // BAGIAN KANAN: Informasi Tambahan (Maps/Tanggal)
-                    // Stack::make([
 
-                    // TextColumn::make('titik_lokasi')
-                    //     ->label('Lokasi')
-                    //     ->icon('heroicon-m-map-pin')
-                    //     ->formatStateUsing(fn() => 'Lihat Rute')
-                    //     // ->url(fn ($state) => $state, true)
-                    //     ->alignEnd(), // Rata kanan
-
-                    // TextColumn::make('created_at')
-                    //     ->dateTime('d M Y')
-                    //     ->size('xs')
-                    //     ->color('gray')
-                    //     ->alignEnd(),
-                    // ]), // Hanya muncul di layar komputer/tablet
-                    // Stack::make([ 
-                    //     TextColumn::make('created_at')
-                    //         ->dateTime()
-                    //         ->sortable()
-                    //         ->toggleable(isToggledHiddenByDefault: true),
-                    //     TextColumn::make('updated_at')
-                    //         ->dateTime()
-                    //         ->sortable()
-                    //         ->toggleable(isToggledHiddenByDefault: true),
-                    // ])
-                    // ->label('Log Waktu')
-                    // ->toggleable(isToggledHiddenByDefault: true),
                 ]),
 
             ])
@@ -279,19 +222,19 @@ class TitikBalihoResource extends Resource
         ];
     }
 
+    public static function getWidgets(): array
+    {
+        return [
+            BalihoMap::class, // Sesuaikan dengan namespace widget Anda
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListTitikBalihos::route('/'),
             'create' => Pages\CreateTitikBaliho::route('/create'),
             'edit' => Pages\EditTitikBaliho::route('/{record}/edit'),
-        ];
-    }
-
-    public static function getWidgets(): array
-    {
-        return [
-            BalihoMap::class, // Sesuaikan dengan namespace widget Anda
         ];
     }
 }

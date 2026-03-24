@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('anggaran_belanjas', function (Blueprint $table) {
             $table->string('tahun_anggaran_id')->after('id')->nullable();
-            $table->renameColumn('layanan_id', 'kegiatan_id');
+            $table->renameColumn('layanan_id', 'kegiatan_id')->nullable();
             $table->foreign('tahun_anggaran_id')->references('id')->on('tahun_anggarans');
             $table->foreign('kegiatan_id')->references('id')->on('kegiatans');
         });

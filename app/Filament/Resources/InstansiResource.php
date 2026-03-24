@@ -33,8 +33,8 @@ class InstansiResource extends Resource
                     ->label('Kategori')
                     ->required()
                     ->options([
-                        'pemerintah' => 'Pemerintah',
-                        'swasta' => 'Swasta',
+                        'Pemerintah' => 'Pemerintah',
+                        'Non Pemerintah' => 'Non Pemerintah',
                     ]),            
             ]);
     }
