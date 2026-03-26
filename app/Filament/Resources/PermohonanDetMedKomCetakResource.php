@@ -40,9 +40,9 @@ class PermohonanDetMedKomCetakResource extends Resource
 
     const LAYANAN_ID = '0c2ce546-aa59-4f23-8954-a03bcf5f5bb1';
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
     protected static ?string $navigationGroup = 'Permohonan Fasilitasi';
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     protected static function getTargetKegiatan(): ?Layanan
     {

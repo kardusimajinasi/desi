@@ -18,7 +18,7 @@ class InstansiResource extends Resource
     protected static ?string $pluralLabel = 'Instansi';
     protected static ?string $modelLabel = 'Instansi';
     protected static ?string $navigationGroup = 'Master Data';
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 21;
 
     public static function form(Form $form): Form
     {

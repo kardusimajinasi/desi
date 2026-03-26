@@ -39,7 +39,7 @@ class PermohonanResource extends Resource
 {
     protected static ?string $model = Permohonan::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-inbox-arrow-down';
     protected static ?string $navigationLabel = 'Permohonan';
     protected static ?string $pluralLabel = 'Permohonan';
     protected static ?string $modelLabel = 'Permohonan';

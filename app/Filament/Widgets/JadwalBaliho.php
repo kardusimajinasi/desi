@@ -18,7 +18,7 @@ class JadwalBaliho extends FullCalendarWidget
     // ];
         protected static ?int $sort = 5;
 
-    protected static ?string $heading = 'Jadwal Publikasi Media Cetak';
+    // protected static ?string $heading = 'Jadwal Publikasi Media Cetak';
     protected int | string | array $columnSpan = 'full';
     // public function renderHeader(): View
     // {

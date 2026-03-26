@@ -137,6 +137,8 @@ class DashboardBalihoMap extends MapWidget
     public function getActions(): array
     {
         $points = $this->getMarkersPoints();
+        $points[] = [-7.567034785878844, 110.79615167728225];
+
         // $points = null;
         // dd($points);
         $this->mapMarkers($this->getMarkersFromDatabase());

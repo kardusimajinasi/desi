@@ -21,11 +21,11 @@ use Filament\Tables\Columns\TextColumn;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationLabel = 'Master User';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationLabel = 'User';
     protected static ?string $pluralLabel = 'User';
-    protected static ?string $slug = 'user';
-    protected static ?string $navigationGroup = 'Master Data';
+    protected static ?string $navigationGroup = 'Akun';
+    protected static ?int $navigationSort = 100;
 
     public static function form(Form $form): Form
     {
@@ -50,21 +50,21 @@ class UserResource extends Resource
                     ->maxLength(255),
 
                 TextInput::make('password')
-                ->label('Password')
-                ->password()
+                    ->label('Password')
+                    ->password()
                     ->revealable()
-                ->required(fn (string $context) => $context === 'create')
-                ->dehydrateStateUsing(fn ($state) => filled($state) ? bcrypt($state) : null)
-                ->maxLength(255)
-                ->rules([
-                    'required',
-                    'min:6',
-                    'regex:/[a-z]/',
-                    'regex:/[A-Z]/',
-                    'regex:/[0-9]/',
-                    'regex:/[\W]/',
-                ])
-                ->hint('Minimal 6 karakter, 1 huruf besar, 1 huruf kecil, 1 angka, 1 simbol'),
+                    ->required(fn(string $context) => $context === 'create')
+                    ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
+                    ->maxLength(255)
+                    ->rules([
+                        'required',
+                        'min:6',
+                        'regex:/[a-z]/',
+                        'regex:/[A-Z]/',
+                        'regex:/[0-9]/',
+                        'regex:/[\W]/',
+                    ])
+                    ->hint('Minimal 6 karakter, 1 huruf besar, 1 huruf kecil, 1 angka, 1 simbol'),
 
                 Forms\Components\Select::make('instansi_id')
                     ->label('Instansi')
@@ -78,7 +78,7 @@ class UserResource extends Resource
                     ->label('Konfirmasi Password')
                     ->password()
                     ->revealable()
-                    ->required(fn (string $context) => $context === 'create')
+                    ->required(fn(string $context) => $context === 'create')
                     ->dehydrated(false)
                     ->same('password'),
 
@@ -116,7 +116,7 @@ class UserResource extends Resource
                     ->modalSubmitActionLabel('Simpan')
                     ->modalCancelActionLabel('Batal')
                     ->disableCreateAnother(),
-                ])
+            ])
             ->columns([
                 \Filament\Tables\Columns\ImageColumn::make('foto_profil')
                     ->label('Foto')
@@ -132,11 +132,11 @@ class UserResource extends Resource
                             ->modalButton('Tutup')
                             ->modalContent(function ($record) {
                                 $foto = $record->foto_profil
-                                ? asset('storage/' . $record->foto_profil)
-                                : asset('images/default-avatar.png');
+                                    ? asset('storage/' . $record->foto_profil)
+                                    : asset('images/default-avatar.png');
                                 return view('components.foto-preview', ['foto' => $foto]);
                             })
-                        ),
+                    ),
 
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama')
@@ -171,9 +171,9 @@ class UserResource extends Resource
             // ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->visible(fn ($record) => auth()->user()?->hasRole('') || auth()->id() === $record->id),
+                    ->visible(fn($record) => auth()->user()?->hasRole('') || auth()->id() === $record->id),
                 Tables\Actions\DeleteAction::make()
-                ->visible(fn () => auth()->user()?->hasRole('')),
+                    ->visible(fn() => auth()->user()?->hasRole('')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -208,7 +208,7 @@ class UserResource extends Resource
 
     // public static function canViewAny(): bool
     // {
-        // return auth()->user()?->hasRole('Raja');
+    // return auth()->user()?->hasRole('Raja');
     // }
 
 }

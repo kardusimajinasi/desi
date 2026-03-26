@@ -30,7 +30,7 @@ class LayananResource extends Resource
     protected static ?string $pluralLabel = 'Layanan';
     protected static ?string $modelLabel = 'Layanan';
     protected static ?string $navigationGroup = 'Master Data';
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 22;
 
     public static function form(Form $form): Form
     {
@@ -104,7 +104,7 @@ class LayananResource extends Resource
     {
         return [
             'index' => Pages\ListLayanans::route('/'),
-            'create' => Pages\CreateLayanan::route('/create'),
+            // 'create' => Pages\CreateLayanan::route('/create'),
             'edit' => Pages\EditLayanan::route('/{record}/edit'),
         ];
     }

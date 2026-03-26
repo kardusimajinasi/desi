@@ -35,12 +35,12 @@ class TitikBalihoResource extends Resource
 {
     protected static ?string $model = TitikBaliho::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-map-pin';
     protected static ?string $navigationLabel = 'Lokasi Baliho';
     protected static ?string $pluralLabel = 'Lokasi Baliho';
     protected static ?string $modelLabel = 'Lokasi Baliho';
     protected static ?string $navigationGroup = 'Pembaruan Tahunan';
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 12;
 
     public static function form(Form $form): Form
     {

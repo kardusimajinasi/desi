@@ -29,12 +29,12 @@ class TahunAnggaranResource extends Resource
 {
     // protected static ?string $model = TahunAnggaran::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
     protected static ?string $navigationLabel = 'Anggaran';
     protected static ?string $pluralLabel = 'Anggaran';
     protected static ?string $modelLabel = 'Anggaran';
     protected static ?string $navigationGroup = 'Pembaruan Tahunan';
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 11;
 
     public static function form(Form $form): Form
     {
