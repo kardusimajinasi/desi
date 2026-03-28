@@ -9,6 +9,7 @@ use App\Models\PermohonanDetMedKomCetak;
 use App\Models\Kegiatan;
 use App\Models\Layanan;
 use App\Models\TitikBaliho;
+use App\Exports\PermohonanCetakExport;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -32,6 +33,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Collection;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
 use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
 
 class PermohonanDetMedKomCetakResource extends Resource
@@ -464,7 +466,7 @@ class PermohonanDetMedKomCetakResource extends Resource
                     Tables\Actions\BulkAction::make('exportRekap')
                         ->label('Export Rekap PDF')
                         ->icon('heroicon-o-document-arrow-down')
-                        ->color('success')
+                        ->color('warning')
                         ->action(function (Collection $records) {
 
                             $namaLayanan = Layanan::where('id', SELF::LAYANAN_ID)->pluck('nama', 'id')->first() ?? 'rekap';
@@ -478,6 +480,23 @@ class PermohonanDetMedKomCetakResource extends Resource
                             return response()->streamDownload(function () use ($pdf) {
                                 echo $pdf->stream();
                             }, "Rekap-Fasilitasi-" . date('d-m-Y') . ".pdf");
+                        })
+                        ->deselectRecordsAfterCompletion(),
+                    Tables\Actions\BulkAction::make('exportRekap Excel')
+                        ->label('Export Rekap Excel')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('success')
+                        ->action(function (Collection $records) {
+
+                            $namaLayanan = Layanan::where('id', SELF::LAYANAN_ID)->pluck('nama', 'id')->first() ?? 'rekap';
+
+
+                            $records->load(['dokumentasi', 'kegiatan', 'permohonan.instansi', 'titikBaliho.ukuranBaliho']);
+
+                            return Excel::download(
+                                new PermohonanCetakExport($records, $namaLayanan),
+                                'Rekap-Publikasi-Cetak-' . now()->format('d-m-Y') . '.xlsx'
+                            );
                         })
                         ->deselectRecordsAfterCompletion(),
                     Tables\Actions\DeleteBulkAction::make(),

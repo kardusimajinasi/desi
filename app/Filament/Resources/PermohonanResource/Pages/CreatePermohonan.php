@@ -10,8 +10,8 @@ class CreatePermohonan extends CreateRecord
 {
     protected static string $resource = PermohonanResource::class;
 
-        protected function getRedirectUrl(): string
-    {
-        return $this->getResource()::getUrl('index');
-    }
+    //     protected function getRedirectUrl(): string
+    // {
+    //     return $this->getResource()::getUrl('index');
+    // }
 }

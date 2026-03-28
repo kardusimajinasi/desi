@@ -37,6 +37,16 @@ class DashboardAnggaranTable extends BaseWidget
                     ->numeric(decimalPlaces: 2)
                     ->alignRight(),
 
+                    Tables\Columns\TextColumn::make('volume_terpakai')
+                    ->label('Vol. Terpakai')
+                    ->getStateUsing(function ($record) {
+                        // Hitung total volume yang sudah terpakai berdasarkan relasi dengan PermohonanDetMedKomCetak
+                        $volumeTerpakai = $record->volume_awal - $record->sisa_volume;
+                        return $volumeTerpakai;
+                    })
+                    ->numeric(decimalPlaces: 2)
+                    ->alignRight(),
+
                 Tables\Columns\TextColumn::make('sisa_volume')
                     ->label('Sisa Volume')
                     ->numeric(decimalPlaces: 2)

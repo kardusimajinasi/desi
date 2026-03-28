@@ -6,6 +6,7 @@ use App\Filament\Resources\PermohonanDetMedKomElektronikResource\Pages;
 use App\Filament\Resources\PermohonanDetMedKomElektronikResource\RelationManagers;
 use App\Models\Layanan;
 use App\Models\PermohonanDetMedKomElektronik;
+use App\Exports\PermohonanElektronikExport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -32,15 +33,16 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker; 
+use Malzariey\FilamentDaterangepickerFilter\Fields\DateRangePicker;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PermohonanDetMedKomElektronikResource extends Resource
 {
     protected static ?string $model = PermohonanDetMedKomElektronik::class;
 
-   const LAYANAN_ID = 'c9730c78-1a46-4cf4-b75d-aaaf9fbfda56';
+    const LAYANAN_ID = 'c9730c78-1a46-4cf4-b75d-aaaf9fbfda56';
 
     protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
     protected static ?string $navigationGroup = 'Permohonan Fasilitasi';
@@ -153,10 +155,10 @@ class PermohonanDetMedKomElektronikResource extends Resource
                             ->searchable()
                             ->preload()
                             ->nullable(),
-                        
+
                         Grid::make(2)
                             ->schema([
-                               TextInput::make('volume_hitung')
+                                TextInput::make('volume_hitung')
                                     ->numeric()
                                     ->required()
                                     ->label('Jumlah')
@@ -356,7 +358,7 @@ class PermohonanDetMedKomElektronikResource extends Resource
                     Tables\Actions\BulkAction::make('exportRekap')
                         ->label('Export Rekap PDF')
                         ->icon('heroicon-o-document-arrow-down')
-                        ->color('success')
+                        ->color('warning')
                         ->action(function (Collection $records) {
 
                             $namaLayanan = Layanan::where('id', SELF::LAYANAN_ID)->pluck('nama', 'id')->first() ?? 'rekap';
@@ -370,6 +372,22 @@ class PermohonanDetMedKomElektronikResource extends Resource
                             return response()->streamDownload(function () use ($pdf) {
                                 echo $pdf->stream();
                             }, "Rekap-Fasilitasi-" . date('d-m-Y') . ".pdf");
+                        })
+                        ->deselectRecordsAfterCompletion(),
+                    Tables\Actions\BulkAction::make('exportRekapExcel')
+                        ->label('Export Rekap Excel')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('success')
+                        ->action(function (Collection $records) {
+
+                            $namaLayanan = Layanan::where('id', SELF::LAYANAN_ID)->pluck('nama', 'id')->first() ?? 'rekap';
+
+
+                            $records->load(['dokumentasi', 'kegiatan', 'permohonan.instansi']);
+                            return Excel::download(
+                                new PermohonanElektronikExport($records, $namaLayanan),
+                                'Rekap-Publikasi-Elektronik-' . now()->format('d-m-Y') . '.xlsx'
+                            );
                         })
                         ->deselectRecordsAfterCompletion(),
                     Tables\Actions\DeleteBulkAction::make(),

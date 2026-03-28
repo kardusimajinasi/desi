@@ -6,6 +6,8 @@ use App\Filament\Resources\PermohonanDetMedKomCetakResource;
 use App\Models\Layanan;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use App\Exports\PermohonanCetakExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ListPermohonanDetMedKomCetaks extends ListRecords
 {
@@ -15,15 +17,10 @@ class ListPermohonanDetMedKomCetaks extends ListRecords
     {
         return [
             \Filament\Actions\Action::make('exportRekapSemua')
-                ->label('Export Rekap (Halaman Ini)')
+                ->label('Export Rekap (Pdf)')
                 ->icon('heroicon-o-document-arrow-down')
-                ->color('success')
+                ->color('warning')
                 ->action(function () {
-                    // ->modalHeading('Preview Rekap Data')
-                    // ->modalWidth('7xl') 
-                    // ->modalSubmitAction(false) // Hilangkan tombol "Submit" karena ini hanya untuk lihat
-                    // ->modalContent(function () {
-                    // Mengambil query yang sudah difilter/search di tabel saat ini
                     $records = $this->getFilteredTableQuery()
                         ->with(['dokumentasi', 'kegiatan', 'permohonan.instansi', 'titikBaliho.ukuranBaliho'])
                         ->get();
@@ -44,6 +41,30 @@ class ListPermohonanDetMedKomCetaks extends ListRecords
                     return response()->streamDownload(function () use ($pdf) {
                         echo $pdf->stream();
                     }, "Rekap-Fasilitasi-" . date('d-m-Y') . ".pdf");
+                }),
+            \Filament\Actions\Action::make('exportRekapExcel')
+                ->label('Export Rekap (Excel)')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('success')
+                ->action(function () {
+                    $records = $this->getFilteredTableQuery()
+                        ->with(['dokumentasi', 'kegiatan', 'permohonan.instansi'])
+                        ->get();
+                    $namaLayanan = Layanan::where('id', '0c2ce546-aa59-4f23-8954-a03bcf5f5bb1')->pluck('nama', 'id')->first() ?? 'rekap';
+
+                    // $pdf = Pdf::loadView('permohonan.rekap_media_elektronik_pdf', [
+                    //     'records' => $records,
+                    //     'namaLayanan' => $namaLayanan
+                    // ])->setPaper('a4', 'portrait');
+
+                    // return response()->streamDownload(function () use ($pdf) {
+                    //     echo $pdf->stream();
+                    // }, "Rekap-Fasilitasi-" . date('d-m-Y') . ".pdf");
+
+                    return Excel::download(
+                        new PermohonanCetakExport($records, $namaLayanan),
+                        'Rekap-Publikasi-Cetak-' . now()->format('d-m-Y') . '.xlsx'
+                    );
                 }),
             // \Filament\Actions\CreateAction::make(),
         ];
