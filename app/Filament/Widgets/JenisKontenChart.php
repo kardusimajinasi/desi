@@ -9,7 +9,7 @@ use Filament\Widgets\ChartWidget;
 
 class JenisKontenChart extends ChartWidget
 {
-        protected static ?int $sort = 3;
+        protected static ?int $sort = 4;
 
     protected static ?string $heading = 'Fasilitasi Publikasi Tahun Ini';
     protected int | string | array $columnSpan = [

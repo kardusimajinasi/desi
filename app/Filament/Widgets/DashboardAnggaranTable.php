@@ -12,7 +12,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 class DashboardAnggaranTable extends BaseWidget
 {
     protected int | string | array $columnSpan = 1;
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 3;
 
     protected static ?string $heading = 'Detail Sisa Volume Anggaran';
 

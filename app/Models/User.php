@@ -85,8 +85,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
             : asset('storage/profil/default-avatar.png');
     }
 
-    public function instansi()
-    {
-        return $this->belongsTo(\App\Models\Instansi::class, 'instansi_id');
-    }
+    // public function instansi()
+    // {
+    //     return $this->belongsTo(\App\Models\Instansi::class, 'instansi_id');
+    // }
 }

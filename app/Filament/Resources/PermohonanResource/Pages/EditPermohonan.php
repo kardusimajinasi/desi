@@ -16,7 +16,25 @@ class EditPermohonan extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
-        protected function getRedirectUrl(): string
+
+    protected function getFormActions(): array
+    {
+        // Cek apakah user memiliki akses untuk mengedit
+        if (auth()->user()->hasRole('Pimpinan')) {
+            // Jika viewer, hanya tampilkan tombol Batal (atau kosongkan sama sekali)
+            return [
+                $this->getCancelFormAction()
+                    ->label('Kembali')
+                    ->icon('heroicon-m-arrow-left') // Menambahkan ikon panah ke kiri
+                    ->color('gray'),
+            ];
+        }
+
+        // Jika bukan viewer, tampilkan aksi standar (Simpan & Batal)
+        return parent::getFormActions();
+    }
+
+    protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
     }

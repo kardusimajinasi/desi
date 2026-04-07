@@ -13,6 +13,7 @@ class Instansi extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
+        'id',
         'nama',
         'kategori',
     ];
@@ -31,7 +32,7 @@ class Instansi extends Model
     //agar instansi tersimpan dalam huruf kapital
     public function setInstansiAttribute($value)
     {
-        $this->attributes['instansi'] = strtoupper($value);
+        $this->attributes['nama'] = strtoupper($value);
     }
 
     public function users()

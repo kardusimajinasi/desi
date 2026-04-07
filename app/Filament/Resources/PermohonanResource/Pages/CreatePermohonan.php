@@ -4,6 +4,7 @@ namespace App\Filament\Resources\PermohonanResource\Pages;
 
 use App\Filament\Resources\PermohonanResource;
 use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreatePermohonan extends CreateRecord
@@ -14,4 +15,9 @@ class CreatePermohonan extends CreateRecord
     // {
     //     return $this->getResource()::getUrl('index');
     // }
+    protected function getCreateAnotherFormAction(): Action
+    {
+        return parent::getCreateAnotherFormAction()
+            ->hidden(); // Ini akan menyembunyikan tombol "Simpan & Buat Lagi"
+    }
 }

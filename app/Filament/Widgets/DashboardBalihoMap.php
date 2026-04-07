@@ -15,7 +15,7 @@ use function Symfony\Component\Clock\now;
 
 class DashboardBalihoMap extends MapWidget
 {
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 5;
 
     protected $listeners = [
         // 'updateMap' => '$refresh',

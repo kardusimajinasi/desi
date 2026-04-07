@@ -24,10 +24,19 @@ class BalihoMap extends MapWidget
 
     protected $listeners = [
         'updateMap' => '$refresh',
-    //     'tableFiltersApplied' => '$refresh',
-    // 'tableSearchApplied' => '$refresh',
-    // 'tableSearch' => '$refresh',
+  // Event bawaan Filament saat tabel difilter atau dicari
+        'tableFiltersApplied' => '$refresh',
+        'tableSearchApplied' => '$refresh',
     ];
+
+    /**
+     * KUNCI 2: Pagar pengaman tipe data PHP 8.x
+     */
+    // public function booted(): void
+    // {
+    //     if ($this->tableColumnSearches === null) $this->tableColumnSearches = [];
+    //     if ($this->tableFilters === null) $this->tableFilters = [];
+    // }
 
     // public function mount(): void
     // {
@@ -75,7 +84,7 @@ class BalihoMap extends MapWidget
         // $this->tableSearch = request()->query('tableSearch');
     // $filters = request()->query('tableFilters');
         // dd($this, $this->tableSearch);
-
+ 
         // getPageTableRecords() memastikan data yang muncul sesuai dengan filter/search di tabel
         return $this->getPageTableRecords()->map(function (TitikBaliho $record) {
             return Marker::make($record->id)

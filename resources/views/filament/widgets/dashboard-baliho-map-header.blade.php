@@ -4,7 +4,7 @@
         {{-- Grid Layout: Menggunakan 6 kolom untuk mencapai rasio 4:2 --}}
         {{-- Grid Container dengan Force Important --}}
 
-        <div class="relative grid place-items-center w-full h-full min-h-[400px]">
+        <div id="map-container" class="relative grid place-items-center w-full h-full min-h-[400px]">
             <div 
                 wire:loading wire:target="filterDate"
                 class="absolute inset-0 z-50 flex items-center justify-center w-48 bg-transparent">

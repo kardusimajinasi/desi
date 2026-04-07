@@ -16,6 +16,7 @@ use App\Models\Layanan;
 use App\Models\Permohonan;
 use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
@@ -72,6 +73,26 @@ class PermohonanResource extends Resource
                                     $set('dengan_surat', false);
                                 }
                             })
+                            ->createOptionForm([
+                                Forms\Components\Grid::make(2)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('nama')
+                                            ->label('Nama Instansi')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->unique('tbl_instansi', 'nama'), // Sesuaikan nama tabel
+
+                                        Forms\Components\Select::make('kategori')
+                                            ->label('Kategori')
+                                            ->required()
+                                            ->options([
+                                                'Pemerintah' => 'Pemerintah',
+                                                'Non Pemerintah' => 'Non Pemerintah',
+                                            ]),
+                                    ])
+                                    ,
+                            ])
+
                             ->columnSpan([
                                 'default' => 3,
                                 'md' => 1,

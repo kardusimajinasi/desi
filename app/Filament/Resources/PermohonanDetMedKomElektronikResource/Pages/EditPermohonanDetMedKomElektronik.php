@@ -21,7 +21,24 @@ class EditPermohonanDetMedKomElektronik extends EditRecord
         ];
     }
 
-        protected function afterDelete()
+    protected function getFormActions(): array
+    {
+        // Cek apakah user memiliki akses untuk mengedit
+        if (auth()->user()->hasRole('Pimpinan')) {
+            // Jika viewer, hanya tampilkan tombol Batal (atau kosongkan sama sekali)
+            return [
+                $this->getCancelFormAction()
+                    ->label('Kembali')
+                    ->icon('heroicon-m-arrow-left') // Menambahkan ikon panah ke kiri
+                    ->color('gray'),
+            ];
+        }
+
+        // Jika bukan viewer, tampilkan aksi standar (Simpan & Batal)
+        return parent::getFormActions();
+    }
+    
+    protected function afterDelete()
     {
         $data = $this->record;
         try {
@@ -50,7 +67,7 @@ class EditPermohonanDetMedKomElektronik extends EditRecord
             // Berhenti dan kembali ke form
             $this->halt();
         }
-    }   
+    }
 
     protected function afterSave()
     {

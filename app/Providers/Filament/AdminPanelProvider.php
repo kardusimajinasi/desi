@@ -9,6 +9,7 @@ use Filament\Widgets;
 use App\Filament\Widgets\DashboardBalihoMap;
 use App\Filament\Widgets\JadwalBaliho;
 use App\Filament\Widgets\JenisKontenChart;
+use App\Filament\Widgets\ManualBookWidget;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Http\Middleware\Authenticate;
@@ -38,20 +39,21 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
-        ->sidebarCollapsibleOnDesktop()
-                    ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
+            ->sidebarCollapsibleOnDesktop()
+            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\StatsOverviewWidget::class,
                 Widgets\AccountWidget::class,
+                ManualBookWidget::class,
+                Widgets\StatsOverviewWidget::class,
                 // Widgets\FilamentInfoWidget::class,
-                DashboardBalihoMap::class,
                 DashboardAnggaranTable::class,
                 JenisKontenChart::class,
+                DashboardBalihoMap::class,
                 \App\Filament\Widgets\JadwalBaliho::class,
                 // \App\Filament\Pages\JadwalMedCetak::class,
             ])
@@ -72,13 +74,13 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentShieldPlugin::make(),
                 FilamentFullCalendarPlugin::make()
-                    // ->schedulerLicenseKey()
-                    // ->selectable()
-                    // ->editable()
-                    // ->timezone()
-                    // ->locale()
-                    // ->plugins()
-                    // ->config()
+                // ->schedulerLicenseKey()
+                // ->selectable()
+                // ->editable()
+                // ->timezone()
+                // ->locale()
+                // ->plugins()
+                // ->config()
             ]);
     }
 }

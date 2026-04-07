@@ -16,7 +16,7 @@ class JadwalBaliho extends FullCalendarWidget
     //     'md' => 2, // Mengambil 2 kolom pada layar medium ke atas
     //     'xl' => 2,
     // ];
-        protected static ?int $sort = 5;
+        protected static ?int $sort = 6;
 
     // protected static ?string $heading = 'Jadwal Publikasi Media Cetak';
     protected int | string | array $columnSpan = 'full';

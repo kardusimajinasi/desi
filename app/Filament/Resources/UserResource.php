@@ -66,13 +66,13 @@ class UserResource extends Resource
                     ])
                     ->hint('Minimal 6 karakter, 1 huruf besar, 1 huruf kecil, 1 angka, 1 simbol'),
 
-                Forms\Components\Select::make('instansi_id')
-                    ->label('Instansi')
-                    ->relationship('instansi', 'instansi') // relasi + kolom yang ditampilkan
-                    ->searchable() // ini bikin mirip select2
-                    ->preload() // optional: load semua opsi di awal
-                    ->required()
-                    ->placeholder('Pilih Instansi'),
+                // Forms\Components\Select::make('instansi_id')
+                //     ->label('Instansi')
+                //     ->relationship('instansi', 'instansi') // relasi + kolom yang ditampilkan
+                //     ->searchable() // ini bikin mirip select2
+                //     ->preload() // optional: load semua opsi di awal
+                //     ->required()
+                //     ->placeholder('Pilih Instansi'),
 
                 TextInput::make('password_confirmation')
                     ->label('Konfirmasi Password')
