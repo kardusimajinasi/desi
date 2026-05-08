@@ -156,10 +156,10 @@ class UserResource extends Resource
                     ->badge()
                     ->separator(', '),
 
-                TextColumn::make('instansi.instansi')
-                    ->label('Nama Instansi')
-                    ->sortable()
-                    ->searchable(),
+                // TextColumn::make('instansi.instansi')
+                //     ->label('Nama Instansi')
+                //     ->sortable()
+                //     ->searchable(),
             ])
             ->filters([
                 //
@@ -171,7 +171,8 @@ class UserResource extends Resource
             // ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn($record) => auth()->user()?->hasRole('') || auth()->id() === $record->id),
+                    // ->visible(fn($record) => auth()->user()?->hasRole('') || auth()->id() === $record->id)
+                    ,
                 Tables\Actions\DeleteAction::make()
                     ->visible(fn() => auth()->user()?->hasRole('')),
             ])

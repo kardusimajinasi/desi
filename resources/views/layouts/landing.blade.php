@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>@yield('title', 'DESI Surakarta - Data Lokasi Baliho dan Status Publikasi')</title>
+      <link rel="icon" type="image/x-icon" href="{{ asset('logo.png') }}">
 
     @vite('resources/css/app.css')
     {{-- @vite('resources/css/app.css', '../build') --}}
@@ -44,6 +45,21 @@
         .hero-bg {
             background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
         }
+
+        .batik-bg {
+            /* Panggil gambar dengan fungsi asset() */
+            background-image: url("{{ asset('asset-batik-1.png') }}");
+
+            /* Buat perulangan hanya secara horizontal */
+            background-repeat: repeat-x;
+
+            /* Atur posisi dan ukuran */
+            background-position: center;
+            background-size: contain;
+            /* background-size: auto 100%; */
+            background-transparent: 70%;
+            /* atau atur tinggi spesifik, misal: auto 100% */
+        }
     </style>
 
     @stack('head')
@@ -55,9 +71,9 @@
     @yield('content')
 
     @include('partials.landing-footer')
-    
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
+
     @livewireScripts
     {{-- @vite('resources/js/app.js', '../build') --}}
     @vite('resources/js/app.js')

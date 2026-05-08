@@ -8,7 +8,7 @@
             </div>
         </div>
         <nav class="hidden md:flex space-x-6">
-            <a href="/" class="{{ request()->is('landing') ? 'font-semibold text-orange-600' : 'text-gray-700 hover:text-orange-600' }}">Beranda</a>
+            <a href="/" class="{{ request()->is('/') ? 'font-semibold text-orange-600' : 'text-gray-700 hover:text-orange-600' }}">Beranda</a>
             <a href="/titik-baliho" class="{{ request()->is('titik-baliho') ? 'font-semibold text-orange-600' : 'text-gray-700 hover:text-orange-600' }}">Titik Baliho</a>
             <a href="/admin" class="text-gray-700 hover:text-orange-600">Masuk</a>
         </nav>
