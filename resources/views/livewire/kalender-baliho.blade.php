@@ -1,47 +1,29 @@
 <div class="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
     {{-- Filter Dropdown --}}
     <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold text-gray-800">Kalender Publikasi</h2>
+        <h2 class="text-xl font-bold text-gray-800">Kalender Publikasi Baliho</h2>
         {{-- <input type="date" wire:model.live="filterMapDate" class="border-gray-300 rounded-lg text-sm"> --}}
         <div>
-            <span class="text-sm text-gray-500 italic">Kategori: </span>
-            <select wire:model.live="selectedTrack" class="border-gray-300 rounded-lg text-sm">
-                <option value="">Semua Kegiatan</option>
-                @foreach (\App\Models\Kegiatan::all() as $kegiatan)
-                    <option value="{{ $kegiatan->id }}">{{ $kegiatan->nama }}</option>
-                @endforeach
-            </select>
-        </div>
-    </div>
-
-    {{-- Container Kalender --}}
-    <div class="relative">
-        {{-- Filter and navigation --}}
-        <div class="flex flex-col gap-4 mb-4 lg:flex-row lg:items-center lg:justify-between">
             <div class="flex items-center gap-2">
                 <button wire:click="previousMonth" type="button"
                     class="px-3 py-2 bg-gray-100 rounded border border-gray-200 hover:bg-gray-200">
-                    ‹ Bulan Sebelumnya
+                    ‹ Sebelumnya
                 </button>
                 <div class="text-lg font-semibold text-gray-800">
                     {{ \Carbon\Carbon::parse($currentMonth . '-01')->isoFormat('MMMM YYYY') }}
                 </div>
                 <button wire:click="nextMonth" type="button"
                     class="px-3 py-2 bg-gray-100 rounded border border-gray-200 hover:bg-gray-200">
-                    Bulan Berikutnya ›
+                    Berikutnya ›
                 </button>
             </div>
-
-            {{-- <div class="flex items-center gap-2">
-                <label class="text-sm font-medium text-gray-600">Kategori:</label>
-                <select wire:model="selectedTrack" class="border-gray-300 rounded-lg text-sm">
-                    <option value="">Semua Kegiatan</option>
-                    @foreach (\App\Models\Kegiatan::all() as $kegiatan)
-                        <option value="{{ $kegiatan->id }}">{{ $kegiatan->nama }}</option>
-                    @endforeach
-                </select>
-            </div> --}}
         </div>
+    </div>
+
+    {{-- Container Kalender --}}
+    <div class="relative">
+        {{-- Filter and navigation --}}
+       
 
         {{-- Grid Kalender --}}
         <div class="overflow-x-auto border border-gray-200 rounded-lg bg-white shadow-sm">
@@ -66,48 +48,40 @@
                 <tbody>
                     @foreach (collect($resources)->groupBy('ukuran_baliho') as $ukuran => $groupResources)
                         <tr class="bg-gray-100">
-                            <td class="sticky left-0 z-20 border-r border-gray-200 bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700"">
+                            <td colspan="{{ count($days)+1}}" class="sticky left-2 z-20 border-r border-gray-200 bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700">
                                 Ukuran: {{ $ukuran }}
                             </td>
-                            <td class=" left-0 z-20 border-r border-gray-200 bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700" colspan="{{ count($days) }}">
+                            {{-- <td class=" left-0 z-20 border-r border-gray-200 bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700" colspan="{{ count($days) }}">
                                 &nbsp;
-                            </td>
+                            </td> --}}
                            
                         </tr>
                         @foreach ($groupResources as $resource)
-                            @foreach ($resource['lanes'] as $laneIndex => $lane)
-                                <tr class="border-t border-gray-200">
-                                    <td class="sticky left-0 z-10 border-r border-gray-200 bg-white px-4 py-3 align-top">
-                                        @if ($laneIndex === 0)
-                                            <div class="font-xs text-gray-800">{{ $resource['title'] }}</div>
-                                            <div class="text-xs text-gray-500">{{ $resource['alamat'] }}</div>
-                                        @endif
-                                    </td>
-                                    @php
-                                        $dayIndex = 1;
-                                    @endphp
-                                    @while ($dayIndex <= count($days))
-                                        @php
-                                            $event = collect($lane)->first(function($item) use ($dayIndex) {
-                                                return isset($item['startIndex']) && $item['startIndex'] === $dayIndex;
-                                            });
-                                        @endphp
-                                        @if ($event)
-                                            <td class="border border-gray-200 bg-slate-50 px-1 py-2 align-top" colspan="{{ $event['span'] }}">
-                                                <button type="button"
-                                                    wire:click.prevent="showEventDetail('{{ $event['id'] }}')"
-                                                    class="w-full rounded text-white text-xs text-left px-2 py-1 shadow-sm overflow-hidden" style="background-color: {{ $event['color'] }};">
-                                                    {{ $event['title'] }}
-                                                </button>
-                                            </td>
-                                            @php $dayIndex += $event['span']; @endphp
-                                        @else
-                                            <td class="border border-gray-200 bg-white px-1 py-3"></td>
-                                            @php $dayIndex++; @endphp
-                                        @endif
-                                    @endwhile
-                                </tr>
-                            @endforeach
+                            <tr class="border-t border-gray-200">
+                                <td class="sticky left-0 z-10 border-r border-gray-200 bg-white px-4 py-3 align-top">
+                                    <div class="font-xs text-gray-800">{{ $resource['title'] }}</div>
+                                    <div class="text-xs text-gray-500">{{ $resource['alamat'] }}</div>
+                                </td>
+                                @foreach ($resource['segments'] as $segment)
+                                    @if (count($segment['events']) > 0)
+                                        <td class="border border-gray-200 bg-slate-50 px-1 py-2 align-top" colspan="{{ $segment['span'] }}">
+                                            <div class="flex flex-col gap-1">
+                                                @foreach ($segment['events'] as $event)
+                                                    <button type="button"
+                                                        wire:click.prevent="showEventDetail('{{ $event['id'] }}')"
+                                                        title="{{ $event['title'] }} ({{ $event['start'] }} - {{ $event['end'] }})"
+                                                        class="w-full rounded text-white text-xs text-left px-2 py-1 shadow-sm overflow-hidden"
+                                                        style="background-color: {{ $event['color'] }};">
+                                                        <span class="block truncate">{{ $event['title'] }}</span>
+                                                    </button>
+                                                @endforeach
+                                            </div>
+                                        </td>
+                                    @else
+                                        <td class="border border-gray-200 bg-white px-1 py-3" colspan="{{ $segment['span'] }}"></td>
+                                    @endif
+                                @endforeach
+                            </tr>
                         @endforeach
                     @endforeach
                 </tbody>
@@ -115,8 +89,8 @@
         </div>
 
         {{-- Modal Detail --}}
-        <div x-data="{ open: false }" x-on:open-modal-kalender.window="open = true"
-            x-on:close-modal-kalender.window="open = false" x-show="open"
+        <div x-data="{ open: false }" x-on:open-modal-kalender-baliho.window="open = true"
+            x-on:close-modal-kalender-baliho.window="open = false" x-show="open"
             class="fixed inset-0 z-[9999] overflow-y-auto" style="display: none;">
 
             <div class="fixed inset-0 bg-black opacity-50"></div>
@@ -170,23 +144,24 @@
                                     <div class="flex flex-wrap gap-3">
                                         @forelse($selectedEventDetails->dokumentasi as $doc)
                                             @php
-                                                $path = storage_path('app/private/' . $doc->lokasi_file);
-                                                $base64 = file_exists($path)
-                                                    ? 'data:image/' .
-                                                        pathinfo($path, PATHINFO_EXTENSION) .
-                                                        ';base64,' .
-                                                        base64_encode(file_get_contents($path))
+                                                $fileExists = $doc->lokasi_file
+                                                    && \Illuminate\Support\Facades\Storage::disk('local')->exists($doc->lokasi_file);
+                                                $fileUrl = $fileExists
+                                                    ? route('dokumentasi-medkom.show', [
+                                                        'documentation' => $doc,
+                                                        'filename' => basename($doc->lokasi_file),
+                                                    ])
                                                     : null;
                                             @endphp
 
                                             <div class="group relative">
                                                 <div
                                                     class="w-24 h-24 rounded-lg overflow-hidden border border-gray-200 shadow-sm transition-all group-hover:ring-2 group-hover:ring-primary-500">
-                                                    @if ($base64)
-                                                        <a href="{{ $base64 }}" target="_blank"
+                                                    @if ($fileUrl)
+                                                        <a href="{{ $fileUrl }}" target="_blank"
                                                             class="absolute inset-0 z-10">
                                                         </a>
-                                                        <img src="{{ $base64 }}"
+                                                        <img src="{{ $fileUrl }}"
                                                             class="w-full h-full object-cover">
                                                     @else
                                                         <div

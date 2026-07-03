@@ -113,10 +113,12 @@ class KalenderBaliho extends Component
             $clampedStart = $eventStart->lessThan($monthStart) ? $monthStart : $eventStart;
             $clampedEnd = $eventEnd->greaterThan($monthEnd) ? $monthEnd : $eventEnd;
             // *Catatan: logika $clampedEnd diganti ke greaterThan agar tepat jika event melebihi akhir bulan
-            $startIndex = $clampedStart->diffInDays($monthStart) + 1;
+            // $startIndex = $clampedStart->diffInDays($monthStart) + 1;
+            $startIndex = $monthStart->diffInDays($clampedStart) + 1;
             // 3. CARA MENGHITUNG JUMLAH HARI
             // Kita gunakan +1 karena perhitungan sewa baliho umumnya bersifat inklusif (hari mulai & selesai dihitung)
             $span = $clampedStart->diffInDays($clampedEnd) + 1;
+            
             $endIndex = $startIndex + $span - 1;
             return [
                 'id' => 'cetak|' . $record->id,
@@ -125,9 +127,9 @@ class KalenderBaliho extends Component
                 'start' => $clampedStart->format('Y-m-d'),
                 'end' => $clampedEnd->format('Y-m-d'),
                 'color' => '#ca8a04',
-                'startIndex' => $startIndex,
-                'span' => $span,
-                'endIndex' => $endIndex,
+                'startIndex' => (int) $startIndex,
+                'span' => (int) $span,
+                'endIndex' => (int) $endIndex,
             ];
         })->filter()->values()->toArray();
 
@@ -139,38 +141,18 @@ class KalenderBaliho extends Component
         // ->orderBy('tgl_mulai_publikasi', 'asc')
         // ->get();
 
+        $daysInMonth = count($days);
 
         $resources = TitikBaliho::query()
             ->orderBy('ukuran_baliho_id', 'asc')
             ->orderBy('nama', 'asc')
             ->get()
-            ->map(function ($record) use ($events) {
+            ->map(function ($record) use ($events, $daysInMonth) {
                 $resourceEvents = collect($events)
                     ->where('resourceId', $record->id)
                     ->sortBy('startIndex')
                     ->values()
                     ->toArray();
-
-                $lanes = [];
-                foreach ($resourceEvents as $event) {
-                    $placed = false;
-                    foreach ($lanes as &$lane) {
-                        $lastEvent = end($lane);
-                        if ($lastEvent['endIndex'] < $event['startIndex']) {
-                            $lane[] = $event;
-                            $placed = true;
-                            break;
-                        }
-                    }
-
-                    if (! $placed) {
-                        $lanes[] = [$event];
-                    }
-                }
-
-                if (empty($lanes)) {
-                    $lanes = [[]];
-                }
 
                 return [
                     'id' => $record->id,
@@ -178,12 +160,69 @@ class KalenderBaliho extends Component
                     'ukuran_baliho' => $record->ukuranBaliho ? $record->ukuranBaliho->ukuran_panjang . 'x' . $record->ukuranBaliho->ukuran_lebar . ' ' . $record->ukuranBaliho->layout . ')' : 'Ukuran Tidak Diketahui',
                     'alamat' => strlen($record->alamat) > 60 ? substr($record->alamat, 0, 60) . '...' : $record->alamat,
                     'events' => $resourceEvents,
-                    'lanes' => $lanes,
+                    'segments' => $this->buildTimelineSegments($resourceEvents, $daysInMonth),
                 ];
             })
             ->values()
             ->toArray();
         return compact('resources', 'events', 'days');
+    }
+
+    private function buildTimelineSegments(array $events, int $daysInMonth): array
+    {
+        if ($daysInMonth <= 0) {
+            return [];
+        }
+
+        $boundaries = [1, $daysInMonth + 1];
+
+        foreach ($events as $event) {
+            if (! isset($event['startIndex'], $event['endIndex'])) {
+                continue;
+            }
+
+            $start = max(1, (int) $event['startIndex']);
+            $end = min($daysInMonth, (int) $event['endIndex']);
+
+            if ($start > $end) {
+                continue;
+            }
+
+            $boundaries[] = $start;
+            $boundaries[] = $end + 1;
+        }
+
+        $boundaries = array_values(array_unique($boundaries));
+        sort($boundaries);
+
+        $segments = [];
+
+        for ($index = 0; $index < count($boundaries) - 1; $index++) {
+            $start = $boundaries[$index];
+            $end = min($boundaries[$index + 1] - 1, $daysInMonth);
+
+            if ($start > $end) {
+                continue;
+            }
+
+            $segmentEvents = collect($events)
+                ->filter(function ($event) use ($start, $end) {
+                    return (int) $event['startIndex'] <= $end
+                        && (int) $event['endIndex'] >= $start;
+                })
+                ->sortBy('startIndex')
+                ->values()
+                ->toArray();
+
+            $segments[] = [
+                'startIndex' => $start,
+                'endIndex' => $end,
+                'span' => $end - $start + 1,
+                'events' => $segmentEvents,
+            ];
+        }
+
+        return $segments;
     }
 
    
@@ -198,7 +237,7 @@ class KalenderBaliho extends Component
             $this->selectedEventDetails = PermohonanDetMedKomElektronik::with(['kegiatan'])->find($eventId);
         }
 
-        $this->dispatch('open-modal-kalender', id: 'event-detail-modal');
+        $this->dispatch('open-modal-kalender-baliho', id: 'event-detail-modal');
     }
 
     // public function updatedSelectedTrack()

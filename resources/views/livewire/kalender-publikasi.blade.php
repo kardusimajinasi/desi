@@ -90,16 +90,24 @@
                                                         ';base64,' .
                                                         base64_encode(file_get_contents($path))
                                                     : null;
+                                                $fileExists = $doc->lokasi_file
+                                                    && \Illuminate\Support\Facades\Storage::disk('local')->exists($doc->lokasi_file);
+                                                $fileUrl = $fileExists
+                                                    ? route('dokumentasi-medkom.show', [
+                                                        'documentation' => $doc,
+                                                        'filename' => basename($doc->lokasi_file),
+                                                    ])
+                                                    : null;
                                             @endphp
 
                                             <div class="group relative">
                                                 <div
                                                     class="w-24 h-24 rounded-lg overflow-hidden border border-gray-200 shadow-sm transition-all group-hover:ring-2 group-hover:ring-primary-500">
-                                                    @if ($base64)
-                                                        <a href="{{ $base64 }}"
-                                                            target="_blank" class="absolute inset-0 z-10">
+                                                    @if ($fileUrl)
+                                                        <a href="{{ $fileUrl }}" target="_blank"
+                                                            class="absolute inset-0 z-10">
                                                         </a>
-                                                        <img src="{{ $base64 }}"
+                                                        <img src="{{ $fileUrl }}" alt="Dokumentasi"
                                                             class="w-full h-full object-cover">
                                                     @else
                                                         <div

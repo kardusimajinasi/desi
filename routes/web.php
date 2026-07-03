@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Documentation;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Artisan;
 
@@ -30,6 +31,14 @@ Route::get('/titik-baliho/{path}', function ($path) {
 
     return Storage::disk('local')->response($fullPath);
 })->where('path', '.*')->name('baliho.private');
+
+Route::get('/dokumentasi-medkom/{documentation}/{filename?}', function (Documentation $documentation, ?string $filename = null) {
+    if (! $documentation->lokasi_file || ! Storage::disk('local')->exists($documentation->lokasi_file)) {
+        abort(404);
+    }
+
+    return Storage::disk('local')->response($documentation->lokasi_file);
+})->where('filename', '.*')->name('dokumentasi-medkom.show');
 
 Route::get('/bersihkan-cache-server', function() {
     Artisan::call('view:clear');

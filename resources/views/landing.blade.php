@@ -17,23 +17,26 @@
                 <a href="#peta"
                     class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-semibold">Lihat Persebaran
                     Baliho</a>
-                <a href="#kalender"
+                <a href="#view-kalender-publikasi"
                     class="bg-white text-orange-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100">Kalender
                     Publikasi</a>
+                <a href="#view-kalender-baliho"
+                    class="bg-white text-orange-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100">Kalender
+                    Baliho</a>
             </div>
         </div>
     </section>
 
     <main class="mx-auto max-w-7xl p-6 space-y-12 mb-6">
 
-        <section  class="bg-white rounded-3xl shadow-xl overflow-hidden">
+        <section id="view-kalender-baliho" class="bg-white rounded-3xl shadow-xl overflow-hidden">
             {{-- <div class="px-6 py-8 border-b border-gray-100">
                 <h3 class="text-2xl font-bold text-gray-900">Kalender Publikasi</h3>
                 <p class="text-gray-600 mt-2">Pantau jadwal publikasi media cetak dan elektronik dengan mudah dalam satu tampilan.</p>
             </div> --}}
             <livewire:kalender-baliho />
         </section>
-        <section id="kalender" class="bg-white rounded-3xl shadow-xl overflow-hidden">
+        <section id="view-kalender-publikasi" class="bg-white rounded-3xl shadow-xl overflow-hidden">
             {{-- <div class="px-6 py-8 border-b border-gray-100">
                 <h3 class="text-2xl font-bold text-gray-900">Kalender Publikasi</h3>
                 <p class="text-gray-600 mt-2">Pantau jadwal publikasi media cetak dan elektronik dengan mudah dalam satu tampilan.</p>
