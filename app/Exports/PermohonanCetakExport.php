@@ -28,11 +28,12 @@ class PermohonanCetakExport implements FromCollection, WithHeadings, WithMapping
             'No',
             'Instansi Permohonan',
             'Perihal Permohonan',
-            'Isi Konten',
             'Tgl Mulai',
             'Tgl Selesai',
-            'Detail',
+            'Isi Konten',
+            'Ukuran Hitung',
             'Anggaran Belanja',
+            'Keterangan',
         ];
     }
 
@@ -46,6 +47,7 @@ class PermohonanCetakExport implements FromCollection, WithHeadings, WithMapping
 
         $keterangan = $record->keterangan ?? '-';
         $keterangan_detail = '';
+        $ukuran = $record->volume_hitung ?? '';
 
         if ($record->kegiatan_id == 'bd7e01de-430d-4336-8774-ed70142171d9') {
             $keterangan = $record->titikBaliho?->nama ?? '-';
@@ -63,11 +65,12 @@ class PermohonanCetakExport implements FromCollection, WithHeadings, WithMapping
             $no++,
             $record->permohonan?->instansi?->nama ?? '-',
             $record->permohonan?->perihal ?? '-',
-            $record->isi_konten,
             $mulai,
             $selesai,
-            $keterangan_detail ? $keterangan . " ({$keterangan_detail})" : $keterangan,
+            $record->isi_konten,
+            $ukuran,
             $record->anggaranBelanja?->nama ?? '-',
+            $keterangan_detail ? $keterangan . " ({$keterangan_detail})" : $keterangan,
         ];
     }
 }

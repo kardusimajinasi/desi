@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Artisan;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -29,3 +30,9 @@ Route::get('/titik-baliho/{path}', function ($path) {
 
     return Storage::disk('local')->response($fullPath);
 })->where('path', '.*')->name('baliho.private');
+
+Route::get('/bersihkan-cache-server', function() {
+    Artisan::call('view:clear');
+    Artisan::call('cache:clear');
+    return 'Selesai! Cache view dan cache aplikasi berhasil dibersihkan di server.';
+});

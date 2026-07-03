@@ -270,15 +270,15 @@ class PermohonanDetMedKomCetakResource extends Resource
                                 FileUpload::make('lokasi_file')
                                     ->label('Unggah Foto')
                                     ->disk('local')
-                                    ->maxSize(2048)
-                                    ->helperText('Format:PDF. Maks 2MB.')
+                                    ->maxSize(1024)
+                                    ->helperText('Format:PDF. Maks 1MB.')
                                     ->directory('dokumentasi_medkom') // Folder di storage/app/public
                                     ->image()
                                     ->imageEditor()
                                     ->required()
                                     ->visibility('private')
                                     ->storeFileNamesIn('attachment_file_names')
-                                    ->columnSpan(2), // Membatasi ukuran file 2MB
+                                    ->columnSpan(2), // Membatasi ukuran file 1MB
                             ]),
                     ])
                     ->itemLabel(fn(array $state): ?string => $state['nama'] ?? 'Dokumentasi Baru')

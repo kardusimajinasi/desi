@@ -16,21 +16,108 @@
 
     {{-- Container Kalender --}}
     <div class="relative">
-        {{-- Loading Overlay --}}
-        {{-- <div wire:loading.delay.longer wire:target="selectedTrack"
-            class="absolute inset-0 z-50 flex items-center justify-center bg-white/50 backdrop-blur-[1px]">
-            <p class="font-bold">Memuat...</p>
-        </div> --}}
+        {{-- Filter and navigation --}}
+        <div class="flex flex-col gap-4 mb-4 lg:flex-row lg:items-center lg:justify-between">
+            <div class="flex items-center gap-2">
+                <button wire:click="previousMonth" type="button"
+                    class="px-3 py-2 bg-gray-100 rounded border border-gray-200 hover:bg-gray-200">
+                    ‹ Bulan Sebelumnya
+                </button>
+                <div class="text-lg font-semibold text-gray-800">
+                    {{ \Carbon\Carbon::parse($currentMonth . '-01')->isoFormat('MMMM YYYY') }}
+                </div>
+                <button wire:click="nextMonth" type="button"
+                    class="px-3 py-2 bg-gray-100 rounded border border-gray-200 hover:bg-gray-200">
+                    Bulan Berikutnya ›
+                </button>
+            </div>
 
-        {{-- Container Kalender --}}
-        <div class="relative">
-            <div id="calendar-canvas" wire:ignore class="min-h-[600px]"></div>
+            {{-- <div class="flex items-center gap-2">
+                <label class="text-sm font-medium text-gray-600">Kategori:</label>
+                <select wire:model="selectedTrack" class="border-gray-300 rounded-lg text-sm">
+                    <option value="">Semua Kegiatan</option>
+                    @foreach (\App\Models\Kegiatan::all() as $kegiatan)
+                        <option value="{{ $kegiatan->id }}">{{ $kegiatan->nama }}</option>
+                    @endforeach
+                </select>
+            </div> --}}
+        </div>
+
+        {{-- Grid Kalender --}}
+        <div class="overflow-x-auto border border-gray-200 rounded-lg bg-white shadow-sm">
+            <table class="w-full border-collapse table-fixed border border-gray-200" style="width:100%;">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th width="7%" class="sticky left-0 z-30 border-r border-gray-200 bg-gray-50 px-4 py-3 text-left font-semibold text-gray-700" rowspan="2">Lokasi Baliho</th>
+                        <th class="border-b border-gray-200 px-2 py-3 text-center text-base font-semibold text-gray-700" colspan="{{ count($days) }}">
+                            {{ \Carbon\Carbon::parse($currentMonth . '-01')->isoFormat('MMMM YYYY') }}
+                        </th>
+                    </tr>
+                    <tr>
+                        {{-- <th class="sticky left-0 z-20 border-r border-gray-200 bg-gray-50"></th> --}}
+                        @foreach ($days as $day)
+                            <th width="2%" class="border-l border-b border-gray-200 bg-gray-50 px-2 py-3 text-center text-[11px] font-semibold text-gray-600">
+                                <div>{{ $day['day'] }}</div>
+                                <div class="text-[10px] text-gray-500">{{ $day['weekday'] }}</div>
+                            </th>
+                        @endforeach
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (collect($resources)->groupBy('ukuran_baliho') as $ukuran => $groupResources)
+                        <tr class="bg-gray-100">
+                            <td class="sticky left-0 z-20 border-r border-gray-200 bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700"">
+                                Ukuran: {{ $ukuran }}
+                            </td>
+                            <td class=" left-0 z-20 border-r border-gray-200 bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700" colspan="{{ count($days) }}">
+                                &nbsp;
+                            </td>
+                           
+                        </tr>
+                        @foreach ($groupResources as $resource)
+                            @foreach ($resource['lanes'] as $laneIndex => $lane)
+                                <tr class="border-t border-gray-200">
+                                    <td class="sticky left-0 z-10 border-r border-gray-200 bg-white px-4 py-3 align-top">
+                                        @if ($laneIndex === 0)
+                                            <div class="font-xs text-gray-800">{{ $resource['title'] }}</div>
+                                            <div class="text-xs text-gray-500">{{ $resource['alamat'] }}</div>
+                                        @endif
+                                    </td>
+                                    @php
+                                        $dayIndex = 1;
+                                    @endphp
+                                    @while ($dayIndex <= count($days))
+                                        @php
+                                            $event = collect($lane)->first(function($item) use ($dayIndex) {
+                                                return isset($item['startIndex']) && $item['startIndex'] === $dayIndex;
+                                            });
+                                        @endphp
+                                        @if ($event)
+                                            <td class="border border-gray-200 bg-slate-50 px-1 py-2 align-top" colspan="{{ $event['span'] }}">
+                                                <button type="button"
+                                                    wire:click.prevent="showEventDetail('{{ $event['id'] }}')"
+                                                    class="w-full rounded text-white text-xs text-left px-2 py-1 shadow-sm overflow-hidden" style="background-color: {{ $event['color'] }};">
+                                                    {{ $event['title'] }}
+                                                </button>
+                                            </td>
+                                            @php $dayIndex += $event['span']; @endphp
+                                        @else
+                                            <td class="border border-gray-200 bg-white px-1 py-3"></td>
+                                            @php $dayIndex++; @endphp
+                                        @endif
+                                    @endwhile
+                                </tr>
+                            @endforeach
+                        @endforeach
+                    @endforeach
+                </tbody>
+            </table>
         </div>
 
         {{-- Modal Detail --}}
         <div x-data="{ open: false }" x-on:open-modal-kalender.window="open = true"
-            x-on:close-modal-kalender.window="open = false" x-show="open" class="fixed inset-0 z-[9999] overflow-y-auto"
-            style="display: none;">
+            x-on:close-modal-kalender.window="open = false" x-show="open"
+            class="fixed inset-0 z-[9999] overflow-y-auto" style="display: none;">
 
             <div class="fixed inset-0 bg-black opacity-50"></div>
 
@@ -96,8 +183,8 @@
                                                 <div
                                                     class="w-24 h-24 rounded-lg overflow-hidden border border-gray-200 shadow-sm transition-all group-hover:ring-2 group-hover:ring-primary-500">
                                                     @if ($base64)
-                                                        <a href="{{ $base64 }}"
-                                                            target="_blank" class="absolute inset-0 z-10">
+                                                        <a href="{{ $base64 }}" target="_blank"
+                                                            class="absolute inset-0 z-10">
                                                         </a>
                                                         <img src="{{ $base64 }}"
                                                             class="w-full h-full object-cover">
@@ -132,53 +219,6 @@
         </div>
 
 
-        {{-- Load Library & Script --}}
-        {{-- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script> --}}
-
-        @script
-            <script>
-                const calendarEl = document.getElementById('calendar-canvas');
-
-                // Inisialisasi FullCalendar
-                const calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    locale: 'id',
-                    headerToolbar: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek'
-                    },
-                    buttonText: {
-                        today: 'hari ini',
-                        week: 'Minggu',
-                        month: 'Bulan',
-                    },
-                    // Mengambil data awal dari fungsi PHP getEvents()
-                    events: @js($this->getEvents()),
-                    eventClick: function(info) {
-                        // Contoh aksi saat event diklik
-                        // Mencegah navigasi URL default jika ada
-                        info.jsEvent.preventDefault();
-
-                        // Panggil fungsi di Livewire menggunakan ID dari event
-                        $wire.showEventDetail(info.event.id);
-                    }
-                });
-
-                calendar.render();
-
-                // Menangkap signal 'refresh-calendar' dari Livewire
-                $wire.on('refresh-calendar', (data) => {
-                    calendar.removeAllEvents();
-                    calendar.addEventSource(data.events);
-                });
-            </script>
-        @endscript
+        {{-- Tidak memakai FullCalendar --}}
     </div>
-
-    @script
-
-    @endscript
 </div>
-
- 

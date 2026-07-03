@@ -23,7 +23,7 @@
                     <select wire:model.live="selectedTrack"
                         class="rounded-lg border-gray-300 text-sm shadow-sm dark:bg-gray-800 dark:text-white">
                         <option value="">Semua Kegiatan</option>
-                        @foreach (\App\Models\Kegiatan::where('layanan_id', '0c2ce546-aa59-4f23-8954-a03bcf5f5bb1')->pluck('nama', 'id') as $id => $nama)
+                        @foreach (\App\Models\Kegiatan::pluck('nama', 'id') as $id => $nama)
                             <option value="{{ $id }}">{{ $nama }}</option>
                         @endforeach
                     </select>

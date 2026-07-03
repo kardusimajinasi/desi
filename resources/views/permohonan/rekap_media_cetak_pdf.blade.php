@@ -162,19 +162,79 @@
                         @forelse($record->dokumentasi as $doc)
                             <div class="photo-box">
                                 @php
-                                    $path = storage_path('app/private/' . $doc->lokasi_file);
-                                    // dd(1, $path);
-                                    if (file_exists($path)) {
-                                        $type = pathinfo($path, PATHINFO_EXTENSION);
-                                        $data = file_get_contents($path);
-                                        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                                    // $imagePath = storage_path('app/private/' . $doc->lokasi_file); // sesuaikan dengan path gambar Anda
+                                    // $imageData = base64_encode(file_get_contents($imagePath));
+                                    // $imageSrc = 'data:image/png;base64,' . $imageData; // gunakan image/jpeg jika file .jpg
+
+                                    // $imagePath = storage_path('app/private/' . $doc->lokasi_file);
+                                    // if (file_exists($imagePath)) {
+                                    //     $mime = mime_content_type($imagePath);
+                                    //     $imageData = base64_encode(file_get_contents($imagePath));
+                                    //     $imageSrc = 'data:' . $mime . ';base64,' . $imageData;
+                                    //     // ukuran byte
+                                    //     $sizeBytes = filesize($imagePath);
+                                    //     $sizeMB = number_format($sizeBytes / 1024 / 1024, 2);
+                                    //     $mime = mime_content_type($imagePath);
+                                    //     $filename = basename($imagePath);
+                                    //     // if ($mime == 'image/png') {
+                                    //     //     $image = new Imagick($path);
+                                    //     //     $image->setImageBackgroundColor('white');
+                                    //     //     $image = $image->mergeImageLayers(Imagick::LAYERMETHOD_FLATTEN);
+                                    //     //     $newPath = storage_path('app/temp/' . uniqid() . '.jpg');
+                                    //     //     $image->setImageFormat('jpg');
+                                    //     //     $image->writeImage($newPath);
+                                    //     // }
+                                    // } else {
+                                    //     $imageSrc = null;
+                                    //     $sizeMB = null;
+                                    //     $mime = null;
+                                    //     $filename = null;
+                                    // }
+
+                                    $imagePath = storage_path('app/private/' . $doc->lokasi_file);
+                                    $imageSrc = null;
+                                    if (file_exists($imagePath)) {
+                                        $mime = mime_content_type($imagePath);
+                                        // ukuran file
+                                        $sizeBytes = filesize($imagePath);
+                                        $sizeMB = number_format($sizeBytes / 1024 / 1024, 2);
+                                        $filename = basename($imagePath);
+
+                                        if ($mime === 'image/png') {
+                                            if ($mime === 'image/png') {
+                                                $img = imagecreatefrompng($imagePath);
+                                                ob_start();
+                                                imagejpeg($img, null, 90);
+                                                $imageData = ob_get_clean();
+                                                imagedestroy($img);
+                                                $imageSrc = 'data:image/jpeg;base64,' . base64_encode($imageData);
+                                                $mime = 'image/jpeg';
+                                                $imagePath = null; // Hapus path asli karena sudah diubah ke JPEG sementara
+                                            }
+                                   
+                                        }
+
+                                        if (file_exists($imagePath)) {
+                                            $imageData = base64_encode(file_get_contents($imagePath));
+                                            $imageSrc = 'data:' . $mime . ';base64,' . $imageData;
+                                        }
                                     } else {
-                                        $base64 = null;
+                                        $imageSrc = null;
+                                        $sizeMB = null;
+                                        $mime = null;
+                                        $filename = null;
                                     }
+
                                 @endphp
 
-                                @if ($base64)
-                                    <img src="{{ $base64 }}" class="img-doc">
+                                @if ($imageSrc)
+                                    <img src="{{ $imageSrc }}" class="img-doc">
+                                    {{-- <img src="file://{{ $imageSrc }}" class="img-doc"> --}}
+                                    {{-- <div>
+                                        File: {{ $filename }} <br>
+                                        Tipe: {{ $mime }} <br>
+                                        Ukuran: {{ $sizeMB }} MB
+                                    </div> --}}
                                 @else
                                     <div style="height: 80px; background: #eee; padding-top: 30px;">Gambar tidak
                                         ditemukan</div>
@@ -195,6 +255,9 @@
         @endforeach
     </table>
 
+    @php
+        // dd($records);
+    @endphp
 </body>
 
 </html>

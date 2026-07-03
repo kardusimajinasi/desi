@@ -144,9 +144,9 @@ class PermohonanResource extends Resource
                                     // ->image()
                                     ->disk('local')
                                     ->directory('surat_permohonan')
-                                    ->maxSize(5120)
+                                    ->maxSize(1024)
                                     ->acceptedFileTypes(['application/pdf']) // Tambahkan PDF
-                                    ->helperText('Format:PDF. Maks 5MB.')
+                                    ->helperText('Format:PDF. Maks 1MB.')
                                     ->columnSpanFull()
                                     ->required(fn(callable $get) => $get('dengan_surat'))
                                     ->visible(fn(callable $get) => $get('dengan_surat')),

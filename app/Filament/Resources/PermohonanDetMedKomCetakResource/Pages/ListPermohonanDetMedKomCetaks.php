@@ -23,6 +23,7 @@ class ListPermohonanDetMedKomCetaks extends ListRecords
                 ->action(function () {
                     $records = $this->getFilteredTableQuery()
                         ->with(['dokumentasi', 'kegiatan', 'permohonan.instansi', 'titikBaliho.ukuranBaliho'])
+                        ->orderBy('permohonan_id', 'asc')
                         ->get();
                     $namaLayanan = Layanan::where('id', '0c2ce546-aa59-4f23-8954-a03bcf5f5bb1')->pluck('nama', 'id')->first() ?? 'rekap';
 

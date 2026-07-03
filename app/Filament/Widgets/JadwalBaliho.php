@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\Kegiatan;
 use App\Models\PermohonanDetMedKomCetak;
+use App\Models\PermohonanDetMedKomElektronik;
 use Carbon\Carbon;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Carbon as SupportCarbon;
@@ -16,7 +17,7 @@ class JadwalBaliho extends FullCalendarWidget
     //     'md' => 2, // Mengambil 2 kolom pada layar medium ke atas
     //     'xl' => 2,
     // ];
-        protected static ?int $sort = 6;
+    protected static ?int $sort = 6;
 
     // protected static ?string $heading = 'Jadwal Publikasi Media Cetak';
     protected int | string | array $columnSpan = 'full';
@@ -59,7 +60,7 @@ class JadwalBaliho extends FullCalendarWidget
         //     ->toArray();
         // // dd($cek);
 
-        return PermohonanDetMedKomCetak::query()
+        $cetakEvents = PermohonanDetMedKomCetak::query()
             ->when($this->selectedTrack, fn($query) => $query->where('kegiatan_id', $this->selectedTrack))
             ->with(['kegiatan', 'titikBaliho']) // Tambahkan Eager Loading agar nama titik muncul
             ->where('tgl_mulai_publikasi', '<=', $fetchInfo['end'])
@@ -104,9 +105,50 @@ class JadwalBaliho extends FullCalendarWidget
                     'url'   => url("admin/permohonan-det-med-kom-cetaks/{$record->id}/edit"),
                     'shouldOpenUrlInNewTab' => true, // Buka di tab baru'allDay' => true, // Tambahkan ini agar event memenuhi kotak tanggal
                 ];
-            })
-            ->values() // Reset index array
-            ->all();   // Ubah menjadi array murni
+            });
+
+        $elektronikEvents = PermohonanDetMedKomElektronik::query()
+            ->when($this->selectedTrack, fn($query) => $query->where('kegiatan_id', $this->selectedTrack))
+            ->get()
+            // ->map(fn($record) => [
+            //     'id'    => $record->id,
+            //     'title' => $record->isi_konten,
+            //     'start' => Carbon::parse($record->tgl_mulai_publikasi)->format('Y-m-d'),
+            //     'end'   => Carbon::parse($record->tgl_selesai_publikasi)->addDay()->format('Y-m-d'),
+            //     'url'   => url("admin/permohonan-det-med-kom-cetaks/{$record->id}/edit"),
+            // ])->toArray();
+            ->map(function (PermohonanDetMedKomElektronik $record) {
+                $isi_konten = strlen($record->isi_konten) > 50
+                    ? substr($record->isi_konten, 0, 50) . '...'
+                    : $record->isi_konten;
+                $kegiatan = $record->kegiatan ? $record->kegiatan->nama : 'Kegiatan Unknown';
+                $titik = $record->titikBaliho ? ' - ' . $record->titikBaliho->nama : '';
+
+                $kegiatanId = $record->kegiatan_id;
+                $color = match ($kegiatanId) {
+
+                    // Running Text
+                    '76a8d937-6879-4f36-91af-4bef7c8771ce' => [
+                        '#9333ea' // Ungu
+                    ],
+                    // Default jika tidak cocok
+                    default => [
+                        '#6b7280' // Abu-abu
+                    ],
+                };
+                return [
+                    'id'    => $record->id, // Sangat disarankan ada
+                    'title' => $isi_konten . " ({$kegiatan})" . $titik,
+                    'start' => Carbon::parse($record->tgl_mulai_publikasi)->format('Y-m-d'),
+                    'end'   => Carbon::parse($record->tgl_selesai_publikasi)->addDay()->format('Y-m-d'),
+                    'color' => $color, // Aktifkan warna agar terlihat jelas
+                    'url' => null, // Tambahkan ini untuk filter
+                    // 'url'   => url("admin/permohonan-det-med-kom-cetaks/{$record->id}/edit"),
+                    // 'shouldOpenUrlInNewTab' => true, // Buka di tab baru'allDay' => true, // Tambahkan ini agar event memenuhi kotak tanggal
+                ];
+            });
+
+        return collect($cetakEvents)->merge($elektronikEvents)->values()->toArray();
     }
 
     /**
