@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Peta Baliho | DESI Surakarta')
+@section('title', 'Peta Baliho | DETIK')
 
 @section('content')
     <section class="hero-bg relative text-white py-20 overflow-hidden">

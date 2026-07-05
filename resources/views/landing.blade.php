@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'DESI Surakarta - Data Lokasi Baliho dan Status Publikasi')
+@section('title', 'Halaman Utama DETIK | Dashboard Eksekutif Tata Kelola MedIa Komunikasi')
 
 @section('content')
     <section class="hero-bg relative text-white py-20 overflow-hidden">
