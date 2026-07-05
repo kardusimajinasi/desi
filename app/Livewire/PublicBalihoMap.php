@@ -9,6 +9,9 @@ use Illuminate\Support\Carbon;
 class PublicBalihoMap extends Component
 {
     public $filterMapDate;
+    protected $listeners = [
+        'refresh-public-baliho-map' => 'onRefreshFromTab',
+    ];
 
     public function mount()
     {
@@ -21,6 +24,13 @@ class PublicBalihoMap extends Component
         $latestMarkers = $this->getMarkersDataProperty();
 
         // Kirim data terbaru ke JavaScript
+        $this->dispatch('update-markers', $latestMarkers);
+    }
+
+    public function onRefreshFromTab()
+    {
+        $latestMarkers = $this->getMarkersDataProperty();
+        // dd($latestMarkers);
         $this->dispatch('update-markers', $latestMarkers);
     }
     public function getMarkersDataProperty()

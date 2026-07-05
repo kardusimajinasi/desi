@@ -24,6 +24,10 @@ class KalenderBaliho extends Component
         $this->refreshCalendar();
     }
 
+    protected $listeners = [
+        'refresh-kalender-baliho' => 'refreshFromTab',
+    ];
+
     public function previousMonth()
     {
         $this->currentMonth = Carbon::parse($this->currentMonth . '-01')->subMonth()->format('Y-m');
@@ -42,6 +46,12 @@ class KalenderBaliho extends Component
         $this->events = $calendarData['events'];
         $this->resources = $calendarData['resources'];
         $this->days = $calendarData['days'];
+    }
+
+    public function refreshFromTab()
+    {
+        $this->refreshCalendar();
+        $this->dispatch('refresh-calendar', events: $this->events, resources: $this->resources);
     }
 
     public function updatedSelectedTrack()
@@ -71,22 +81,26 @@ class KalenderBaliho extends Component
         $year = $monthStart->format('Y');  // Contoh: 2026
         $month = $monthStart->format('m'); // Contoh: 06
 
+        $startDate = Carbon::create($year, $month, 1)->startOfMonth();
+        $endDate   = Carbon::create($year, $month, 1)->endOfMonth();
         // dd($selectedMonth);
         $records = PermohonanDetMedKomCetak::query()
             ->with(['kegiatan', 'titikBaliho'])
             ->when($this->selectedTrack, fn($query) => $query->where('kegiatan_id', $this->selectedTrack))
-            ->where(function ($query) use ($year, $month) {
-                $query->where(function ($sub) use ($year, $month) {
-                    // Kondisi A: tgl_mulai_publikasi bernilai Y-m ini
-                    $sub->whereYear('tgl_mulai_publikasi', $year)
-                        ->whereMonth('tgl_mulai_publikasi', $month);
-                })
-                    ->orWhere(function ($sub) use ($year, $month) {
-                        // Kondisi B: tgl_selesai_publikasi bernilai Y-m ini
-                        $sub->whereYear('tgl_selesai_publikasi', $year)
-                            ->whereMonth('tgl_selesai_publikasi', $month);
-                    });
-            })
+            // ->where(function ($query) use ($year, $month) {
+            //     $query->where(function ($sub) use ($year, $month) {
+            //         // Kondisi A: tgl_mulai_publikasi bernilai Y-m ini
+            //         $sub->whereYear('tgl_mulai_publikasi', $year)
+            //             ->whereMonth('tgl_mulai_publikasi', $month);
+            //     })
+            //         ->orWhere(function ($sub) use ($year, $month) {
+            //             // Kondisi B: tgl_selesai_publikasi bernilai Y-m ini
+            //             $sub->whereYear('tgl_selesai_publikasi', $year)
+            //                 ->whereMonth('tgl_selesai_publikasi', $month);
+            //         });
+            // })
+            ->whereDate('tgl_mulai_publikasi', '<=', $endDate)
+            ->whereDate('tgl_selesai_publikasi', '>=', $startDate)
             ->where('kegiatan_id', 'bd7e01de-430d-4336-8774-ed70142171d9') // Filter untuk kegiatan Baliho
             ->orderBy('tgl_mulai_publikasi', 'asc')
             ->get();
@@ -118,7 +132,7 @@ class KalenderBaliho extends Component
             // 3. CARA MENGHITUNG JUMLAH HARI
             // Kita gunakan +1 karena perhitungan sewa baliho umumnya bersifat inklusif (hari mulai & selesai dihitung)
             $span = $clampedStart->diffInDays($clampedEnd) + 1;
-            
+
             $endIndex = $startIndex + $span - 1;
             return [
                 'id' => 'cetak|' . $record->id,
@@ -145,7 +159,7 @@ class KalenderBaliho extends Component
 
         $resources = TitikBaliho::query()
             ->orderBy('ukuran_baliho_id', 'asc')
-            ->orderBy('nama', 'asc')
+            ->orderBy('nama', 'desc')
             ->get()
             ->map(function ($record) use ($events, $daysInMonth) {
                 $resourceEvents = collect($events)
@@ -225,7 +239,7 @@ class KalenderBaliho extends Component
         return $segments;
     }
 
-   
+
 
     public function showEventDetail($id)
     {

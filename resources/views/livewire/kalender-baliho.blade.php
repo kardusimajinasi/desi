@@ -9,8 +9,14 @@
                     class="px-3 py-2 bg-gray-100 rounded border border-gray-200 hover:bg-gray-200">
                     ‹ Sebelumnya
                 </button>
-                <div class="text-lg font-semibold text-gray-800">
-                    {{ \Carbon\Carbon::parse($currentMonth . '-01')->isoFormat('MMMM YYYY') }}
+                <div class="text-lg font-semibold text-gray-800" wire:loading.class="opacity-50" wire:target="previousMonth,nextMonth">
+                    <span wire:loading.remove.delay.shortest wire:target="previousMonth,nextMonth">
+                        {{ \Carbon\Carbon::parse($currentMonth . '-01')->isoFormat('MMMM YYYY') }}
+                    </span>
+                    <span wire:loading.delay.shortest wire:target="previousMonth,nextMonth" class="inline-flex hidden items-center gap-2">
+                        <span class="h-2.5 w-2.5 animate-pulse rounded-full bg-orange-500"></span>
+                        <span>Memuat...</span>
+                    </span>
                 </div>
                 <button wire:click="nextMonth" type="button"
                     class="px-3 py-2 bg-gray-100 rounded border border-gray-200 hover:bg-gray-200">

@@ -7,10 +7,8 @@
         <div class="mx-auto max-w-7xl px-6">
             <div class="grid md:grid-cols-3 gap-8">
                 <div>
-                    <h4 class="text-lg font-semibold mb-4">DESI</h4>
-                    <p class="text-gray-600">Sistem informasi terpadu untuk pengelolaan data baliho dan publikasi di
-                        Kota
-                        Surakarta.</p>
+                    <h4 class="text-lg font-semibold mb-4">DETIK</h4>
+                    <p class="text-gray-600">Sistem Monitoring Tata Kelola Media Komunikasi Publik Pemerintah Kota Surakarta</p>
                 </div>
                 <div>
                     <h4 class="text-lg font-semibold mb-4">Kontak Kami</h4>

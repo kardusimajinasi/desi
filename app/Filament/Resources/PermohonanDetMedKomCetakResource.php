@@ -347,8 +347,12 @@ class PermohonanDetMedKomCetakResource extends Resource
                             : "No. Surat: -"
                     ),
 
-                TextColumn::make('konten_ringkas')
+                TextColumn::make('isi_konten')
                     ->searchable()
+                    ->hidden(),
+
+                TextColumn::make('konten_ringkas')
+                    // ->searchable()
                     ->wrap()
                     ->label('Konten')
                     ->getStateUsing(function (PermohonanDetMedKomCetak $record) {
@@ -441,7 +445,7 @@ class PermohonanDetMedKomCetakResource extends Resource
                         return $query
                             ->when(
                                 $data['dari'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('tgl_mulai_publikasi', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('tgl_selesai_publikasi', '>=', $date),
                             )
                             ->when(
                                 $data['sampai'],

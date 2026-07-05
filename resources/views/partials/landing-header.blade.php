@@ -3,8 +3,8 @@
         <div class="flex items-center space-x-4">
             <img src="{{ asset('logo.png') }}" alt="Logo Pemerintah Kota Surakarta" class="h-12">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">DESI</h1>
-                <p class="text-sm text-gray-600">Dashboard Eksekutif Sumber Daya Informasi</p>
+                <h1 class="text-2xl font-bold text-gray-800">DETIK</h1>
+                <p class="text-sm text-gray-600">Dashboard Eksekutif Tata Kelola MedIa Komunikasi Publik Pemerintah Kota Surakarta</p>
             </div>
         </div>
         <nav class="hidden md:flex space-x-6">

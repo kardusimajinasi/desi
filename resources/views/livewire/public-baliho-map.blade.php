@@ -112,12 +112,14 @@
 
             // SINKRONISASI: Jalankan ulang saat filterMapDate diubah di Livewire
             $wire.on('update-markers', (event) => {
-                console.log('Filter dijalankan, menerima data baru...');
+                // console.log('Filter dijalankan, menerima data baru...');
 
                 // Di Livewire v3, data yang dikirim via dispatch ada di dalam array pertama atau property detail
                 const newMarkers = Array.isArray(event) ? event[0] : event;
 
                 initMarkers(newMarkers);
+                // Pastikan Leaflet merender ulang jika container sebelumnya tersembunyi
+                try { if (map) map.invalidateSize(); } catch (err) { console.warn(err); }
             });
 
             /* --------------------------- Initialize Markers --------------------------- */
@@ -128,7 +130,7 @@
                 // Konversi ke Array jika data berupa Object (mengantisipasi Associative Array dari PHP)
                 const dataToLoad = Array.isArray(rawData) ? rawData : Object.values(rawData);
 
-                console.log('Rendering markers with:', dataToLoad);
+                // console.log('Rendering markers with:', dataToLoad);
 
                 // 2. Bersihkan marker lama
                 if (markers.length > 0) {
@@ -218,8 +220,8 @@
 
             /* ----------------------- Handle Marker DragEnd Event ---------------------- */
             function markerDragEnd($event, index) {
-                console.log(map);
-                console.log($event.target.getLatLng());
+                // console.log(map);
+                // console.log($event.target.getLatLng());
             }
         </script>
     @endscript

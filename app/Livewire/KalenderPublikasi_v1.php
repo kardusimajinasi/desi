@@ -21,10 +21,6 @@ class KalenderPublikasi extends Component
         $this->getEvents();
     }
 
-    protected $listeners = [
-        'refresh-kalender-publikasi' => 'refreshFromTab',
-    ];
-
     public function getEvents()
     {
         // Logika query data Anda
@@ -73,8 +69,10 @@ class KalenderPublikasi extends Component
                     'title' => $isi_konten . " ({$kegiatan})" . $titik,
                     'start' => Carbon::parse($record->tgl_mulai_publikasi)->format('Y-m-d'),
                     'end'   => Carbon::parse($record->tgl_selesai_publikasi)->addDay()->format('Y-m-d'),
-                    'color' => $color, 
-                    'url' => null,
+                    'color' => $color, // Aktifkan warna agar terlihat jelas
+                    'url' => null, // Tambahkan ini untuk filter
+                    // 'url'   => url("admin/permohonan-det-med-kom-cetaks/{$record->id}/edit"),
+                    // 'shouldOpenUrlInNewTab' => true, // Buka di tab baru'allDay' => true, // Tambahkan ini agar event memenuhi kotak tanggal
                 ];
             });
         $elektronikEvents = PermohonanDetMedKomElektronik::query()
@@ -112,7 +110,9 @@ class KalenderPublikasi extends Component
                     'start' => Carbon::parse($record->tgl_mulai_publikasi)->format('Y-m-d'),
                     'end'   => Carbon::parse($record->tgl_selesai_publikasi)->addDay()->format('Y-m-d'),
                     'color' => $color, // Aktifkan warna agar terlihat jelas
-                    'url' => null, 
+                    'url' => null, // Tambahkan ini untuk filter
+                    // 'url'   => url("admin/permohonan-det-med-kom-cetaks/{$record->id}/edit"),
+                    // 'shouldOpenUrlInNewTab' => true, // Buka di tab baru'allDay' => true, // Tambahkan ini agar event memenuhi kotak tanggal
                 ];
             });
 
@@ -136,11 +136,6 @@ class KalenderPublikasi extends Component
     }
 
     public function updatedSelectedTrack()
-    {
-        $this->dispatch('refresh-calendar', events: $this->getEvents());
-    }
-
-    public function refreshFromTab()
     {
         $this->dispatch('refresh-calendar', events: $this->getEvents());
     }

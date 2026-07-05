@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'DESI Surakarta - Data Lokasi Baliho dan Status Publikasi')</title>
+    <title>@yield('title', 'DETIK - Dashboard Eksekutif Tata Kelola MedIa Komunikasi')</title>
       <link rel="icon" type="image/x-icon" href="{{ asset('logo.png') }}">
 
     @vite('resources/css/app.css')
